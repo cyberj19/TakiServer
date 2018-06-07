@@ -9,7 +9,7 @@
   "keywords": [
     "taki"
   ],
-  "author": "jacob",
+  "author": "Tomer Abenheimer, Jacob Roginsky",
   "license": "ISC",
   "dependencies": {
     "body-parser": "^1.18.3",
