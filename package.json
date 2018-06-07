@@ -9,11 +9,12 @@
   "keywords": [
     "taki"
   ],
-  "author": "elibj",
+  "author": "jacob",
   "license": "ISC",
   "dependencies": {
     "body-parser": "^1.18.3",
     "express": "^4.16.3",
-    "express-session": "^1.15.6"
+    "express-session": "^1.15.6",
+    "serve-static": "^1.13.2"
   }
 }

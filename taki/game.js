@@ -2,52 +2,62 @@ const consts = require('./consts.js');
 const errors = consts.errors;
 const moveTypes = consts.moveTypes;
 const gameStates = consts.gameStates;
+const playerStates = consts.playerStates;
 
 const Board = require('./board.js').Board;
 const GamePlayer = require('./gameplayer.js').GamePlayer;
 
 exports.Game = function(params) {
     this.name = params.game;
-    var state = gameStates.PENDING;
+    var state = gameStates.Pending;
+    var round = -1;
+    var winners = [];
 
     var createdBy = params.player;
 
     var players = [];
     var observers = [];
+    var messages = [];
     
-    var board = new Board();
+    var board = new Board(params.required_players);
 
     var requiredPlayers = params.required_players;
-
+    var activePlayers = 0;
 
     this.getOverview = function() {
         return {
             name: this.name,
-            state: this.state,
+            state: state,
             players: players.length,
             observers: observers.length,
             required: requiredPlayers,
-            created_by: createdBy
+            created_by: createdBy,
+            current_round: round
         }
     };
+    
+    this.getView = function(player) {
+        if (state === gameStates.Finishing) return getFinishView(player);
+        else return getActiveView(player);
+    }
 
     var start = function() {
         board.initialize();
-        players.forEach(function(player) {
-            const numCards = 6;
-            for (let i = 0; i < numCards; i++) {
-                player.addCard(board.dealCard());
-            }
-        });
-        this.state = gameStates.ACTIVE;        
+        for (let player of players) {
+            player.addCards(board.dealCard(8));
+            player.state = playerStates.Playing;
+        }
+        activePlayers = players.length;
+        round++;
+        state = gameStates.Active;        
     };
 
     var getObserverView = function() {
         let vplayers = null;
-        if (state === gameStates.PENDING) {
+        if (state === gameStates.Pending) {
             vplayers = players.map(p => {name: p.name});
         } else {
-            vplayers = players.map(p => p.getView());
+            vplayers = players.map(p => p.getView(board.getCurrentPlayerId()));
         }
 
         return {
@@ -55,7 +65,8 @@ exports.Game = function(params) {
             state: state,
             board: board.getView(),
             players: vplayers,
-            observers: observers
+            observers: observers,
+            messages: messages
         };
     };
 
@@ -66,12 +77,13 @@ exports.Game = function(params) {
             name: this.name,
             state: state,
             board: board.getView(),
-            player: player.getView(),
-            observers: observers
-        }
+            player: player.getView(board.getCurrentPlayerId()),
+            observers: observers,
+            messages: messages
+        };
     };
 
-    var playerInGame = function(player) {
+    var isPlayerInGame = function(player) {
         var index = players.findIndex(p => p.name === player);
         if (index !== -1) return true;
 
@@ -81,88 +93,144 @@ exports.Game = function(params) {
         return false;
     };
 
-    this.getView = function(player) {
+    var getActiveView = function(player) {
         var index = players.findIndex(p => p.name === player);
         if (index === -1) return getObserverView();
         return getPlayerView(player);
-    }
+    };
 
-    this.playCard = function(player, card) {
-        var player = player.find(p => p.name === params.player);
-        if (!player) return {success: false, error: errors.PLAYER_UNKNOWN};
+    var getFinishView = function(player) {
+        if (state !== gameStates.Finishing) 
+            return {success: false, error : errors.GAME_STILL_ONGOING};
+        
+        return {
+            name: this.name,
+            round: round,
+            players: players.map(p => p.getSummaryView())
+        };
+    };
 
-        var card = player.getCard(params.card);
-        if (!card) return {success: false, error: errors.CARD_UNKNOWN};
+    var playCard = function(player, card) {
+        var card = player.getCard(card);
+        if (!card) return {success: false, error: errors.MOVE_UNAVAILABLE};
 
-        if (!board.validateMove(card)) return {success: false, error: errors.MOVE_ILLEGAL};
+        if (!board.isCardElligible(card)) return {success: false, error: errors.MOVE_ILLEGAL};
 
-        board.makeMove(card);
-        board.getNextTurn();
+        board.placeCard(card);
+        player.removeCard(card);
         return {success: true};
     };
 
-
-
     var takeCard = function(player) {
-        if (player.hasElligibleCards(board.getTop())) return {success:false, error: errors.MOVE_ELLIGIBLE_CARDS};
+        if (player.hasElligibleCards(board.getTop())) 
+            return {success: false, error: errors.MOVE_ELLIGIBLE_CARDS};
 
         var cards = board.dealCard();
-        player.cards.push(cards);
-        board.getNextTurn();
-
+        console.log(cards);
+        player.addCards(cards);
         return {success: true};
     };
 
     var endTaki = function(player) {
         if (!board.isTakiMode()) return {success:false, error: errors.MOVE_ILLEGAL}
         board.endTaki();
-        board.getNextTurn();
         return {success: true};
     };
 
-    this.playerMove = function(params) {
+    this.move = function(params) {
+        console.log('game.playerMove: ' + params);
         var player = players.find(p => p.name === params.player);
         if (!player) return {success:false, error: errors.PLAYER_UNKNOWN};
+
+        if (player.state === state.Pending || player.state === state.Finished) {
+            return {success: false, error: errors.MOVE_PLAYER_NOT_PLAYING};
+        }
+
+        if (board.getCurrentPlayerId() !== player.id)
+            return {success: false, error: errors.MOVE_NOT_PLAYERS_TURN};
+
+        var result;
         if (params.move === moveTypes.Card)
-            return playCard(player, params.card);
+            result = playCard(player, params.card);
         else if (params.move === moveTypes.EndTaki)
-            return endTaki(player);
+            result = endTaki(player);
         else if (params.move === moveTypes.Take)
-            return takeCard(player);
+            result = takeCard(player);
         else 
-            return {success: false, error: errors.MOVE_UNKNOWN}
+            return {success: false, error: errors.MOVE_UNAVAILABLE}
+
+        if (!result.success) return result;        
+        if (!player.hasCards()) {
+            board.removePlayer(player.id);
+            player.state = playerStates.Finished;
+            activePlayers--;
+            if (activePlayers === 1) { // TODO: find last player
+                state = gameState.Finishing;
+            }
+        } else {
+            board.endTurn();
+        }
+        return result;
     };
 
-    this.addPlayer = function(params) {
-        if (this.state === gameStates.ACTIVE) return {success: false, error: errors.GAME_ALREADY_STARTED};
-        if (playerInGame(params.player)) return {success: false, error: errors.GAME_PLAYER_ALREADY_IN_GAME};
+    this.add = function(params) {
+        if (state !== gameStates.Pending) return {success: false, error: errors.GAME_ALREADY_STARTED};
+        if (isPlayerInGame(params.player)) return {success: false, error: errors.GAME_PLAYER_ALREADY_IN_GAME};
 
         if (params.asObserver) {
             observers.push({name: params.player});
             return {success: true};
         }
 
-        players.push(new GamePlayer(params.player, players.length));
+        let gamePlayer = new GamePlayer(params.player, players.length, playerStates.Pending);
+        players.push(gamePlayer);
         if (players.length === requiredPlayers) {
             start();
         }
         return {success: true};
     };
 
-    this.removePlayer = function(params) {
-        // TODO : check if game started
-        var index = players.findIndex(p => p.name === params.player);
-        if (index !== -1) {
-            players.splice(index,1);
-            return true;
+    var removePlayer = function(index) {
+        var player = players[index];
+        if (player.state === playerStates.Finished) {
+            players.splice(index, 1);
+            return {success: true};
         }
+        if (state === gameStates.Finishing || state === gameStates.Pending) {
+            players.splice(index, 1);
 
-        index = observers.findIndex(p => p.name === params.player);
+            if (state === gameStates.Finishing && players.length === 0) {
+                state = gameStates.Pending;
+            }
+
+            return {success: true};
+        }
+        // TODO : return success false with error
+    };
+
+    this.remove = function(params) {
+        var index = players.findIndex(p => p.name === params.player);
+        if (index !== -1) return removePlayer(index);
+
+        index = observers.findIndex(o => o.name === params.player);
         if (index !== -1) {
             observers.splice(index, 1);
-            return true;
+            return {success: true};
         }
 
-        return false;
+        return {success: false, error: errors.PLAYER_UNKNOWN};
+    }
+
+    this.message = function(params) {
+        var index = players.findIndex(p => p.name === params.player);
+        if (index === -1) return {success: false, error: errors.PLAYER_UNKNOWN};
+
+        messages.push({
+            sender: player,
+            text: params.text,
+            ts: (new Date()).getTime()
+        });
+
+        return {success: true};
     }
 }

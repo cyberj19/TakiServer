@@ -1,4 +1,3 @@
-// import APIServer from 'api';
 var API = require('./api.js').APIServer;
 var Taki = require('./taki/taki.js').Taki;
 

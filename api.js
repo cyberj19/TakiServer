@@ -2,12 +2,13 @@ var session = require('express-session');
 var express = require('express');
 var HTTPServer = require('http');
 var bodyParser = require('body-parser');
+var serveStatic = require('serve-static');
 
 exports.APIServer = function(params, taki) {
     var app = express();
-    app.use(bodyParser.json());
+    app.use(bodyParser.json()); // todo: check error handling when not json
     
-    app.set('trust proxy', 1) // trust first proxy
+    app.set('trust proxy', 1) // trust first proxy: check this
     var sessionSettings = {
         secret: 'keyboard cat',
         resave: false,
@@ -15,15 +16,19 @@ exports.APIServer = function(params, taki) {
         cookie: { secure: true, maxAge: 60000 }
     };
     app.use(session(sessionSettings));
+    app.use(serveStatic('www', {'index': ['default.html', 'default.htm']}))
 
     var http = HTTPServer.Server(app);
     var auth = function(request, response, next) {
         if (!request.session.player) {
             console.warn('Unauthorized request from client');
             response.status(401).send({success: false});
+            return;
         }
+        request.session.authorized = true;
         next();
     }
+    
     app.get('/api/info', function(request, response, next) {
         console.info('GET from info API');
         response.status(200).send('This is the taki service');
@@ -36,7 +41,7 @@ exports.APIServer = function(params, taki) {
 
     app.get('/api/game', function(request, response, next) {
         console.log(request.query);
-        var res = taki.getGame({
+        var res = taki.getGameView({
             game: request.query.game,
             player: request.query.player
         });
@@ -46,7 +51,15 @@ exports.APIServer = function(params, taki) {
     });
 
     app.post('/api/game/move', function(request, response, next) {
-        var res = taki.make
+        var params = {
+            player: request.body.player,
+            game: request.body.game,
+            move: request.body.move,
+            card: request.body.card
+        };
+
+        var res = taki.move(params);
+        response.status(200).send(res);
     });
     app.post('/api/join', function(request, response, next) {
 
@@ -119,6 +132,18 @@ exports.APIServer = function(params, taki) {
         delete request.session.player;
         response.status(200).send({success:true});
     });
+
+    app.post('/api/game/message', function(request,response,next) {
+        console.log('New message from ' + request.body.player);
+        var res = taki.message({
+            game: request.body.game,
+            player: request.body.player,
+            text: request.body.text
+        });
+
+        if (!res.success) response.status(400).send(res);
+        else response.status(200).send(res);
+    })
 
     this.start = function() {
         http.listen(params.port, function() {

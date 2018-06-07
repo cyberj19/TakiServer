@@ -1,12 +1,17 @@
 exports.errors = {
-    PLAYER_NAME_EXISTS: 10,
-    PLAYER_UNKNOWN: 11,
+    PLAYER_NAME_EXISTS: 'PLAYER_NAME_EXISTS',
+    PLAYER_ILLEGAL_NAME: 'PLAYER_ILLEGAL_NAME',
+    PLAYER_UNKNOWN: 'PLAYER_UNKNOWN',
     GAME_NAME_EXISTS: 20,
     GAME_INVALID_NUM_PLAYERS: 21,
     GAME_UNKNOWN_NAME: 22,
-    GAME_ALREADY_STARTED: 23,
+    GAME_ALREADY_STARTED: 'GAME_ALREADY_STARTED',
     GAME_UNKNOWN_MOVE: 24,
-    CARD_ILLEGAL: 30
+    MOVE_ILLEGAL: 'MOVE_ILLEGAL',
+    MOVE_PLAYER_NOT_PLAYING: 31,
+    MOVE_ELLIGIBLE_CARDS: 'MOVE_ELLIGIBLE_CARDS',
+    MOVE_UNAVAILABLE: 'MOVE_UNAVAILABLE',
+    MOVE_NOT_PLAYERS_TURN: 'MOVE_NOT_PLAYERS_TURN'
 };
 
 exports.cardTypes = {
@@ -44,6 +49,13 @@ exports.moveTypes = {
 
 
 exports.gameStates = {
-    PENDING: 0,
-    ACTIVE: 1
+    Pending: "Pending",
+    Active: "Active",
+    Finishing: "Finishing"
+};
+
+exports.playerStates = {
+    Pending: 0,
+    Playing: 1,
+    Finished: 2
 };

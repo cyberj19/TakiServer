@@ -3,23 +3,25 @@ var errors = require('./consts.js').errors;
 
 exports.Taki = function() {
 
+    // TODO: move to consts file
     const playerStates = {
-        IDLE: 0,
-        PLAYING: 1,
-        OBSERVING: 2
+        Idle: 'Idle',
+        InGame: 'InGame'
     }
-
 
     var players = [];
     var games = [];
 
     this.registerPlayer = function(params) {
+        if (params.name === '')
+            return {success: false, error: errors.PLAYER_ILLEGAL_NAME};
+            
         var index = players.findIndex(player => player.name === params.name);
         if (index !== -1) return {success: false, error: errors.PLAYER_NAME_EXISTS};
 
         var newPlayer = {
             name: params.name,
-            state: playerStates.IDLE
+            state: playerStates.Idle
         };
 
         players.push(newPlayer);
@@ -44,20 +46,20 @@ exports.Taki = function() {
         var game = games.find(g => g.name === params.game);
         if (!game) return {success: false, error: errors.GAME_UNKNOWN_NAME};
 
-        game.playerMove({move: params.move, player: params.player});
+        return game.move({move: params.move, player: params.player, card: params.card});
     }
 
-    this.getGame = function(params) {
+    this.getGameView = function(params) {
         var game = games.find(g => g.name === params.game);
-        if (game) return {success: true, game: game.getView(params.player)};
+        if (!game) return {success: false, error: errors.GAME_UNKNOWN_NAME};
 
-        return {success: false, error: errors.GAME_UNKNOWN_NAME };
+        return {success: true, game: game.getView(params)};
     };
 
     this.getView = function() {
         var state = {
             success: true,
-            games: games.map(g=>g.getOverview()),
+            games: games.map(g => g.getOverview()),
             players: players
         };
 
@@ -80,32 +82,38 @@ exports.Taki = function() {
 
     this.joinGame = function(params) {
         var game = games.find(g => g.name === params.game);
-        if (!game) return {success:false, error:errors.GAME_UNKNOWN_NAME};
+        if (!game) return {success: false, error: errors.GAME_UNKNOWN_NAME};
         
         var player = players.find(p => p.name === params.player);
         if (!player) return {success: false, error: errors.PLAYER_UNKNOWN};
 
-        var res = game.addPlayer(params);
+        var res = game.add(params);
 
         if (!res.success) return res;
         
-        if (params.asObserver) player.state = playerStates.OBSERVING;
-        else player.state = playerStates.PLAYING;
+        player.state = playerStates.InGame;
         return res;
     };
 
     this.leaveGame = function(params) {
         var game = games.find(g => g.name === params.game);
-        if (!game) return {success:false, error:errors.GAME_UNKNOWN_NAME};
+        if (!game) return {success: false, error: errors.GAME_UNKNOWN_NAME};
 
         var player = players.find(p => p.name === params.player);
         if (!player) return {success: false, error: errors.PLAYER_UNKNOWN};
 
-        var res = game.removePlayer(params.player);
+        var res = game.remove(params.player);
         if (!res.success) return res;
 
-        player.state = playerStates.IDLE;
+        player.state = playerStates.Idle;
         
         return res;
     };
+
+    this.message = function(params) {
+        var game = games.find(g => g.name === params.game);
+        if (!game) return {success: false, error: errors.GAME_UNKNOWN_NAME};
+
+        return game.message(params);
+    }
 }
