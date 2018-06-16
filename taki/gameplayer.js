@@ -10,17 +10,34 @@ exports.GamePlayer = function(name,id,state) {
     this.id = id;
     this.numTurns = 0;
     this.totalTime = 0;
+    var win = -1;
 
+    this.setWin = function(win) {
+        this.win = win;
+    }
     this.hasElligibleCards = function(currentCard) {
         return cards.some(c=>cardsModule.isElligible(c,currentCard));
-    }
-    this.getView = function(currentPlayerId) {
+    };
+
+    this.getSelfView = function(currentPlayerId) {
         return {
             name: this.name,
             cards: cards,
             type: this.type,
             id: this.id,
-            turn: this.id === currentPlayerId
+            turn: this.id === currentPlayerId,
+            win: win
+        };
+    };
+
+    this.getOpponentView = function(currentPlayerId) {
+        return {
+            name: this.name,
+            cards: cards.map(c => {}),
+            type: this.type,
+            id: this.id,
+            turn: this.id === currentPlayerId,
+            win: win
         };
     };
 
@@ -29,13 +46,15 @@ exports.GamePlayer = function(name,id,state) {
             name: this.name,
             turns_with_one_card: 1,
             num_turns: this.numTurns,
-            avg_time_per_turn: this.totalTime*1.0/this.numTurns
+            avg_time_per_turn: this.totalTime*1.0/this.numTurns,
+            win: win
         }
-    }
+    };
 
     this.hasCards = function() {
         return cards.length > 0;
-    }
+    };
+
     var getCardIndex = function(card) {
         for (let i = 0; i < cards.length; i++) {
             if (cards[i].type === card.type) {
@@ -45,7 +64,8 @@ exports.GamePlayer = function(name,id,state) {
             }
         }
         return -1;
-    }
+    };
+
     this.getCard = function(card) {
         console.log(card);
         var index = getCardIndex(card);

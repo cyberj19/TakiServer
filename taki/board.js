@@ -5,9 +5,15 @@ const cardColors = consts.cardColors;
 const cards = require('./cards.js');
 const random = require('../utils/random.js');
 
-exports.Board = function(nplayers) {
+exports.GetTakiBoard = function(nplayers) {
+    const DelearModule = require('./dealer.js');
+    let deck = DelearModule.defaultDeck();
+    let delear = new DelearModule.Delear(deck,'random');
+    return new exports.Board(nplayers, delear);
+}
+
+exports.Board = function(nplayers, dealer) {
     var initialized = false;
-    var deck = [];
     var stack = [];
     var direction = 1;
     var currentTurn = 0;
@@ -21,10 +27,11 @@ exports.Board = function(nplayers) {
         return stack[stack.length - 1];
     }; 
 
-    this.removePlayer = function(playerId) {
-        var index = activePlayersIds.indexOf(playerId);
+    this.removeWinner = function(winnerId) {
+        let currentPlayerId = this.getCurrentPlayerId();
+        var index = activePlayersIds.indexOf(winnerId);
         activePlayersIds.splice(index,1);
-        currentTurn = index % activePlayersIds.length;
+        currentTurn = activePlayersIds.indexOf(currentPlayerId);
     };
 
     this.getCurrentPlayerId = function() {
@@ -34,7 +41,7 @@ exports.Board = function(nplayers) {
     this.getView = function() {
         if (!initialized) return {};
         return {
-            deck_size: deck.length,
+            deck_empty: dealer.isEmpty(),
             stack_top: this.getTop(),
             turn: {
                 currentPlayerId: activePlayersIds[currentTurn],
@@ -47,56 +54,26 @@ exports.Board = function(nplayers) {
         };
     };
 
-    var populateDeck = function() {
-        for (let i = 0; i < 4; i++) 
-        deck.push({type: cardTypes.Color, color: cardColors.None});
-
-        var coloredCardsTypes = [cardTypes.One, cardTypes.Take2, cardTypes.Three, cardTypes.Four, cardTypes.Five, 
-                            cardTypes.Six, cardTypes.Seven, cardTypes.Eight, cardTypes.Nine,
-                            cardTypes.Taki, cardTypes.Stop, cardTypes.Plus,
-                            cardTypes.ChangeDirection];
-
-        for (let color in cardColors) {
-            if (cardColors[color] === cardColors.None) continue;
-
-            for (let i = 0; i < coloredCardsTypes.length; i++) {
-                let newCard = {
-                    color: cardColors[color],
-                    type: coloredCardsTypes[i]
-                };
-                deck.push(newCard);
-                deck.push(newCard);
-
-            }
-        }
-
-        deck.push({color: cardColors.None, type: cardTypes.SuperTaki});
-        deck.push({color: cardColors.None, type: cardTypes.SuperTaki});
-    };
-
-    var openFirstCard = function() {
-        var firstCard = deck.splice(randomCard(), 1);
-        firstCard = firstCard[0];
-        if (firstCard.type === cardTypes.SuperTaki ||
-            firstCard.type === cardTypes.Color) {
-                let color = random.randomKey(cardColors);
-                firstCard.color = cardColors[color];
-            }
-
-        stack.push(firstCard);
-    };
-    this.initialize = function() {
-        deck = [];
-        populateDeck();
-        openFirstCard();
-        for (let i = 0; i < numPlayers; i++) activePlayersIds.push(i);
+    this.initialize = function(playerIds) {
+        stack.push(dealer.getFirstCard());
+        activePlayerIds = playerIds;
         initialized = true;
     };
 
-    var randomCard = function() {
-        return random.randomIndex(deck);
+    var resetDelear = function() {
+        temp = stack.pop();
+        dealer.returnCards(stack);
+        stack = [temp];
     };
 
+    var getCards = function(n) {
+        var newCards = [];
+        for (let i = 0; i < n; i++) {
+            if (dealer.isEmpty()) resetDelear();
+            newCards.push(dealer.getCard());
+        }
+        return newCards;
+    }
     this.isTakiMode = function() {return takiMode;}
 
     this.dealCard = function(n) {
@@ -106,27 +83,27 @@ exports.Board = function(nplayers) {
         } else if (take2Counter > 0) {
             cardsToDraw = take2Counter;
         }
-
-        var newCards = [];
-        for (let i = 0; i < cardsToDraw; i++) {
-            let newCard = deck.splice(randomCard(),1);
-            newCards.push(newCard[0]);
-        }
-        return newCards;
+        return getCards(cardsToDraw);
     };
 
     this.isCardElligible = function(card) {
         return cards.isElligible(card, this.getTop());
     };
 
+    this.takeCard = function() {
+        let cards = this.dealCard();
+        endTurn();
+        return cards;
+    }
     this.placeCard = function(card) {
         stack.push(card);
         lastPlayedCard = card;
+        endTurn();
     };
 
     this.endTaki = function() {
         takiMode = false;
-        // lastPlayedCard = null; // todo: not good for stop card, +2
+        endTurn();
     }
 
     var advanceTurn = function() {
@@ -134,10 +111,10 @@ exports.Board = function(nplayers) {
         currentTurn = (currentTurn + activePlayersIds.length) % activePlayersIds.length;  
     };
 
-    this.endTurn = function() {
+    var endTurn = function() {
         // if (!lastPlayedCard)
         //     return advanceTurn();
-
+        
         if (lastPlayedCard.type === cardTypes.ChangeDirection) {
             direction *= -1;
         }

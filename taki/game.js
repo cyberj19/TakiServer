@@ -4,22 +4,23 @@ const moveTypes = consts.moveTypes;
 const gameStates = consts.gameStates;
 const playerStates = consts.playerStates;
 
-const Board = require('./board.js').Board;
+const Board = require('./board.js');
 const GamePlayer = require('./gameplayer.js').GamePlayer;
 
 exports.Game = function(params) {
     this.name = params.game;
+    var createdBy = params.player;
     var state = gameStates.Pending;
     var round = -1;
+
     var winners = [];
-
-    var createdBy = params.player;
-
     var players = [];
+    var playersCount = 0;
+
     var observers = [];
     var messages = [];
     
-    var board = new Board(params.required_players);
+    var board = Board.GetTakiBoard(params.required_players);
 
     var requiredPlayers = params.required_players;
     var activePlayers = 0;
@@ -42,7 +43,7 @@ exports.Game = function(params) {
     }
 
     var start = function() {
-        board.initialize();
+        board.initialize(players.map(p => p.id));
         for (let player of players) {
             player.addCards(board.dealCard(8));
             player.state = playerStates.Playing;
@@ -57,13 +58,18 @@ exports.Game = function(params) {
         if (state === gameStates.Pending) {
             vplayers = players.map(p => {name: p.name});
         } else {
-            vplayers = players.map(p => p.getView(board.getCurrentPlayerId()));
+            vplayers = players.map(p => p.getSelfView(board.getCurrentPlayerId()));
         }
 
         return {
             name: this.name,
             state: state,
-            board: board.getView(),
+
+            activeTwo: boardView.special_modes.take2,
+            heap: [boardView.stack_top],
+            direction: boardView.turn.direction,
+            isTaki: boardView.special_modes.taki,
+
             players: vplayers,
             observers: observers,
             messages: messages
@@ -71,13 +77,24 @@ exports.Game = function(params) {
     };
 
     var getPlayerView = function(player) {
-        var player = players.find(p => p.name === player);
+        var currentPlayerId = board.getCurrentPlayerId();
+        var playerViews = players.map(p => function() {
+            if (p.name === player) return p.getSelfView(currentPlayerId);
+            else return p.getOpponentView(currentPlayerId);
+        });
 
+        var boardView = board.getView();
         return {
             name: this.name,
             state: state,
-            board: board.getView(),
-            player: player.getView(board.getCurrentPlayerId()),
+
+            activeTwo: boardView.special_modes.take2,
+            heap: [boardView.stack_top],
+            direction: boardView.turn.direction,
+            isTaki: boardView.special_modes.taki,
+            
+            winners: winners,
+            players: playerViews,
             observers: observers,
             messages: messages
         };
@@ -100,13 +117,11 @@ exports.Game = function(params) {
     };
 
     var getFinishView = function(player) {
-        if (state !== gameStates.Finishing) 
-            return {success: false, error : errors.GAME_STILL_ONGOING};
-        
         return {
             name: this.name,
             round: round,
-            players: players.map(p => p.getSummaryView())
+            players: players.map(p => p.getSummaryView()),
+            winner: winners
         };
     };
 
@@ -125,9 +140,7 @@ exports.Game = function(params) {
         if (player.hasElligibleCards(board.getTop())) 
             return {success: false, error: errors.MOVE_ELLIGIBLE_CARDS};
 
-        var cards = board.dealCard();
-        console.log(cards);
-        player.addCards(cards);
+        player.addCards(board.takeCard());
         return {success: true};
     };
 
@@ -150,6 +163,7 @@ exports.Game = function(params) {
             return {success: false, error: errors.MOVE_NOT_PLAYERS_TURN};
 
         var result;
+        
         if (params.move === moveTypes.Card)
             result = playCard(player, params.card);
         else if (params.move === moveTypes.EndTaki)
@@ -160,18 +174,25 @@ exports.Game = function(params) {
             return {success: false, error: errors.MOVE_UNAVAILABLE}
 
         if (!result.success) return result;        
+        
         if (!player.hasCards()) {
-            board.removePlayer(player.id);
-            player.state = playerStates.Finished;
-            activePlayers--;
-            if (activePlayers === 1) { // TODO: find last player
+            playerWin(player); 
+            if (activePlayers === 1) { 
+                playerWin(players.find(p=>p.state !== playerStates.Finished));
                 state = gameState.Finishing;
-            }
-        } else {
-            board.endTurn();
-        }
+            }   
+        } 
+        
         return result;
     };
+
+    var playerWin = function(winner) {
+        board.removeWinner(winner.id);
+        winner.state = playerStates.Finished;
+        winners.push(winner.name);
+        winner.setWinner(winners.length);
+        activePlayers--;
+    }
 
     this.add = function(params) {
         if (state !== gameStates.Pending) return {success: false, error: errors.GAME_ALREADY_STARTED};
@@ -182,7 +203,7 @@ exports.Game = function(params) {
             return {success: true};
         }
 
-        let gamePlayer = new GamePlayer(params.player, players.length, playerStates.Pending);
+        let gamePlayer = new GamePlayer(params.player, playersCount++, playerStates.Pending);
         players.push(gamePlayer);
         if (players.length === requiredPlayers) {
             start();
@@ -192,20 +213,11 @@ exports.Game = function(params) {
 
     var removePlayer = function(index) {
         var player = players[index];
-        if (player.state === playerStates.Finished) {
+        if (player.state === playerStates.Finished || state === gameStates.Pending) {
             players.splice(index, 1);
             return {success: true};
         }
-        if (state === gameStates.Finishing || state === gameStates.Pending) {
-            players.splice(index, 1);
-
-            if (state === gameStates.Finishing && players.length === 0) {
-                state = gameStates.Pending;
-            }
-
-            return {success: true};
-        }
-        // TODO : return success false with error
+        return {success: false, error: errors.GAME_CANNOT_LEAVE_WHILE_PLAYING};
     };
 
     this.remove = function(params) {

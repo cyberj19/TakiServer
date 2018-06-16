@@ -5,47 +5,47 @@ const Taki = require('../taki/taki.js').Taki;
 var taki = new Taki();
 
 
-taki.registerPlayer({name: 'Eli'});
+taki.registerPlayer({name: 'Tomer'});
 taki.registerPlayer({name: 'Jacob'});
 
-taki.createGame({player: 'Eli', game: 'EliJacob', required_players: 2});
+taki.createGame({player: 'Tomer', game: 'TomerJacob', required_players: 2});
 
-taki.joinGame({player: 'Eli', game: 'EliJacob'});
-taki.joinGame({player: 'Jacob', game: 'EliJacob'});
+taki.joinGame({player: 'Tomer', game: 'TomerJacob'});
+taki.joinGame({player: 'Jacob', game: 'TomerJacob'});
 
 exports.taki = taki;
-exports.getEliGame = function() {
-    return taki.getGameView({player:'Eli', game:'EliJacob'});
+exports.getTomerGame = function() {
+    return taki.getGameView({player:'Tomer', game:'TomerJacob'});
 };
 
 var showCurrent = function() {
-    var game = exports.getEliGame();
+    var game = exports.getTomerGame();
     console.log('Player',game.game.players[game.game.board.turn.currentPlayerId].name);
     console.log('Cards:',game.game.players[game.game.board.turn.currentPlayerId].cards);
     console.log('Top:',game.game.board.stack_top);
 }
 exports.put = function(color,type) {
-    var game = exports.getEliGame();
+    var game = exports.getTomerGame();
     var player = game.game.players[game.game.board.turn.currentPlayerId].name;
-    var res = taki.move({player:player, game:'EliJacob',move:moves.Card,card:{color:color,type:type}});
+    var res = taki.move({player:player, game:'TomerJacob',move:moves.Card,card:{color:color,type:type}});
     console.log(res);
     showCurrent();
 }
 
 
 exports.take = function() {
-    var game = exports.getEliGame();
+    var game = exports.getTomerGame();
     
     var player = game.game.players[game.game.board.turn.currentPlayerId].name;
-    console.log(taki.move({player:player, game:'EliJacob',move:moves.Take}));
+    console.log(taki.move({player:player, game:'TomerJacob',move:moves.Take}));
     showCurrent();
 }
 
 exports.end = function() {
-    var game = exports.getEliGame();
+    var game = exports.getTomerGame();
     
     var player = game.game.players[game.game.board.turn.currentPlayerId].name;
-    var res = taki.move({player:player, game:'EliJacob', move:moves.EndTaki});
+    var res = taki.move({player:player, game:'TomerJacob', move:moves.EndTaki});
     console.log(res);
     showCurrent();
 

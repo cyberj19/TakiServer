@@ -6,6 +6,7 @@ exports.errors = {
     GAME_INVALID_NUM_PLAYERS: 21,
     GAME_UNKNOWN_NAME: 22,
     GAME_ALREADY_STARTED: 'GAME_ALREADY_STARTED',
+    GAME_CANNOT_LEAVE_WHILE_PLAYING: 'GAME_CANNOT_LEAVE_WHILE_PLAYING',
     GAME_UNKNOWN_MOVE: 24,
     MOVE_ILLEGAL: 'MOVE_ILLEGAL',
     MOVE_PLAYER_NOT_PLAYING: 31,
@@ -45,7 +46,7 @@ exports.moveTypes = {
     Card: "CARD",
     Take: "TAKE",
     EndTaki: "ENDTAKI"
-}
+};
 
 
 exports.gameStates = {
