@@ -23,9 +23,20 @@ export const apiCall = (type, body, callback, errorFn) => {
         ...method !== 'GET' ? {body: JSON.stringify(body)} : {},
         credentials: 'include'
     }).then(response => {
-        if (response.ok) {
-            return callback(response);
-        }
-        return errorFn && errorFn(response);
+        response.json().then(
+            json => {
+                let parsedResponse = {
+                    status: response.status,
+                    body: json
+                }
+                if (response.ok) return callback(parsedResponse);
+                return errorFn && errorFn(parsedResponse);
+            }
+        )
+        // response.json().then(json => console.log(json));
+        // if (response.ok) {
+        //     return callback(response);
+        // }
+        // return errorFn && errorFn(response);
     });
 };

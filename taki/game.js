@@ -9,21 +9,21 @@ const GamePlayer = require('./gameplayer.js').GamePlayer;
 
 exports.Game = function(params) {
     this.name = params.game;
-    var createdBy = params.player;
-    var state = gameStates.Pending;
-    var round = -1;
+    const createdBy = params.player;
+    let state = gameStates.Pending;
+    let round = -1;
 
-    var winners = [];
-    var players = [];
-    var playersCount = 0;
+    let winners = [];
+    let players = [];
+    let playersCount = 0;
 
-    var observers = [];
-    var messages = [];
+    let observers = [];
+    let messages = [];
     
-    var board = Board.GetTakiBoard(params.required_players);
+    let board = Board.GetTakiBoard(params.required_players);
 
-    var requiredPlayers = params.required_players;
-    var activePlayers = 0;
+    const requiredPlayers = params.required_players;
+    let activePlayers = 0;
 
     this.getOverview = function() {
         return {
@@ -42,7 +42,7 @@ exports.Game = function(params) {
         else return getActiveView(player);
     }
 
-    var start = function() {
+    const start = function() {
         board.initialize(players.map(p => p.id));
         for (let player of players) {
             player.addCards(board.dealCard(8));
@@ -53,7 +53,7 @@ exports.Game = function(params) {
         state = gameStates.Active;        
     };
 
-    var getObserverView = function() {
+    const getObserverView = function() {
         let vplayers = null;
         if (state === gameStates.Pending) {
             vplayers = players.map(p => {name: p.name});
@@ -76,14 +76,14 @@ exports.Game = function(params) {
         };
     };
 
-    var getPlayerView = function(player) {
-        var currentPlayerId = board.getCurrentPlayerId();
-        var playerViews = players.map(p => function() {
+    const getPlayerView = function(player) {
+        let currentPlayerId = board.getCurrentPlayerId();
+        let playerViews = players.map(p => function() {
             if (p.name === player) return p.getSelfView(currentPlayerId);
             else return p.getOpponentView(currentPlayerId);
         });
 
-        var boardView = board.getView();
+        let boardView = board.getView();
         return {
             name: this.name,
             state: state,
@@ -100,8 +100,8 @@ exports.Game = function(params) {
         };
     };
 
-    var isPlayerInGame = function(player) {
-        var index = players.findIndex(p => p.name === player);
+    const isPlayerInGame = function(player) {
+        let index = players.findIndex(p => p.name === player);
         if (index !== -1) return true;
 
         index = observers.findIndex(p => p.name === player);
@@ -110,13 +110,13 @@ exports.Game = function(params) {
         return false;
     };
 
-    var getActiveView = function(player) {
-        var index = players.findIndex(p => p.name === player);
+    const getActiveView = function(player) {
+        let index = players.findIndex(p => p.name === player);
         if (index === -1) return getObserverView();
         return getPlayerView(player);
     };
 
-    var getFinishView = function(player) {
+    const getFinishView = function(player) {
         return {
             name: this.name,
             round: round,
@@ -125,8 +125,8 @@ exports.Game = function(params) {
         };
     };
 
-    var playCard = function(player, card) {
-        var card = player.getCard(card);
+    const playCard = function(player, card) {
+        let card = player.getCard(card);
         if (!card) return {success: false, error: errors.MOVE_UNAVAILABLE};
 
         if (!board.isCardElligible(card)) return {success: false, error: errors.MOVE_ILLEGAL};
@@ -136,7 +136,7 @@ exports.Game = function(params) {
         return {success: true};
     };
 
-    var takeCard = function(player) {
+    const takeCard = function(player) {
         if (player.hasElligibleCards(board.getTop())) 
             return {success: false, error: errors.MOVE_ELLIGIBLE_CARDS};
 
@@ -144,7 +144,7 @@ exports.Game = function(params) {
         return {success: true};
     };
 
-    var endTaki = function(player) {
+    const endTaki = function(player) {
         if (!board.isTakiMode()) return {success:false, error: errors.MOVE_ILLEGAL}
         board.endTaki();
         return {success: true};
@@ -152,7 +152,7 @@ exports.Game = function(params) {
 
     this.move = function(params) {
         console.log('game.playerMove: ' + params);
-        var player = players.find(p => p.name === params.player);
+        let player = players.find(p => p.name === params.player);
         if (!player) return {success:false, error: errors.PLAYER_UNKNOWN};
 
         if (player.state === state.Pending || player.state === state.Finished) {
@@ -162,7 +162,7 @@ exports.Game = function(params) {
         if (board.getCurrentPlayerId() !== player.id)
             return {success: false, error: errors.MOVE_NOT_PLAYERS_TURN};
 
-        var result;
+        let result;
         
         if (params.move === moveTypes.Card)
             result = playCard(player, params.card);
@@ -186,7 +186,7 @@ exports.Game = function(params) {
         return result;
     };
 
-    var playerWin = function(winner) {
+    const playerWin = function(winner) {
         board.removeWinner(winner.id);
         winner.state = playerStates.Finished;
         winners.push(winner.name);
@@ -211,8 +211,8 @@ exports.Game = function(params) {
         return {success: true};
     };
 
-    var removePlayer = function(index) {
-        var player = players[index];
+    const removePlayer = function(index) {
+        let player = players[index];
         if (player.state === playerStates.Finished || state === gameStates.Pending) {
             players.splice(index, 1);
             return {success: true};
@@ -221,7 +221,7 @@ exports.Game = function(params) {
     };
 
     this.remove = function(params) {
-        var index = players.findIndex(p => p.name === params.player);
+        let index = players.findIndex(p => p.name === params.player);
         if (index !== -1) return removePlayer(index);
 
         index = observers.findIndex(o => o.name === params.player);
@@ -234,7 +234,7 @@ exports.Game = function(params) {
     }
 
     this.message = function(params) {
-        var index = players.findIndex(p => p.name === params.player);
+        let index = players.findIndex(p => p.name === params.player);
         if (index === -1) return {success: false, error: errors.PLAYER_UNKNOWN};
 
         messages.push({
