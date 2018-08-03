@@ -1,14 +1,15 @@
-var session = require('express-session');
-var express = require('express');
-var HTTPServer = require('http');
-var bodyParser = require('body-parser');
-var serveStatic = require('serve-static');
+const path = require('path');
+const session = require('express-session');
+const express = require('express');
+const HTTPServer = require('http');
+const bodyParser = require('body-parser');
+//const serveStatic = require('serve-static');
 
 exports.APIServer = function(params, taki) {
     var app = express();
     app.use(bodyParser.json()); // todo: check error handling when not json
     
-    app.set('trust proxy', 1) // trust first proxy: check this
+    app.set('trust proxy', 1); // trust first proxy: check this
     var sessionSettings = {
         secret: 'keyboard cat',
         resave: false,
@@ -16,7 +17,7 @@ exports.APIServer = function(params, taki) {
         cookie: { secure: true, maxAge: 60000 }
     };
     app.use(session(sessionSettings));
-    app.use(serveStatic('www', {'index': ['default.html', 'default.htm']}))
+    app.use(express.static(path.resolve(__dirname, "..", "public")));
 
     var http = HTTPServer.Server(app);
     var auth = function(request, response, next) {
