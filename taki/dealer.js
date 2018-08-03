@@ -11,7 +11,7 @@ exports.defaultDeck = function () {
             color: cardColors.None
         });
 
-    var coloredCardsTypes = [cardTypes.One, cardTypes.Take2, cardTypes.Three, cardTypes.Four, cardTypes.Five,
+    const coloredCardsTypes = [cardTypes.One, cardTypes.Take2, cardTypes.Three, cardTypes.Four, cardTypes.Five,
         cardTypes.Six, cardTypes.Seven, cardTypes.Eight, cardTypes.Nine,
         cardTypes.Taki, cardTypes.Stop, cardTypes.Plus,
         cardTypes.ChangeDirection
@@ -44,7 +44,7 @@ exports.defaultDeck = function () {
 }
 
 exports.Delear = function (initCards, type) {
-    var cards = [];
+    let cards = [];
     cards = initCards;
 
     this.isEmpty = function() {
@@ -60,7 +60,7 @@ exports.Delear = function (initCards, type) {
     };
 
     this.getFirstCard = function () {
-        var card = this.getCard();
+        let card = this.getCard();
         if (card.type === cardTypes.SuperTaki ||
             card.type === cardTypes.Color) {
             if (type === 'deterministic') card.color = 'yellow';

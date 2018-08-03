@@ -1,7 +1,7 @@
-var API = require('./api.js').APIServer;
-var Taki = require('../taki/taki.js').Taki;
+const API = require('./api.js').APIServer;
+const Taki = require('../taki/taki.js').Taki;
 
-var taki = new Taki();
-var params = {port: 1000};
-api = new API(params, taki);
+let taki = new Taki();
+const params = {port: 1000};
+let api = new API(params, taki);
 api.start();

@@ -13,15 +13,15 @@ exports.GetTakiBoard = function(nplayers) {
 }
 
 exports.Board = function(nplayers, dealer) {
-    var initialized = false;
-    var stack = [];
-    var direction = 1;
-    var currentTurn = 0;
-    var lastPlayedCard = null;
-    var take2Counter = 0;
-    var takiMode = false;
-    var numPlayers = nplayers;
-    var activePlayersIds = [];
+    let initialized = false;
+    let stack = [];
+    let direction = 1;
+    let currentTurn = 0;
+    let lastPlayedCard = null;
+    let take2Counter = 0;
+    let takiMode = false;
+    let numPlayers = nplayers;
+    let activePlayersIds = [];
 
     this.getTop = function() {
         return stack[stack.length - 1];
@@ -29,7 +29,7 @@ exports.Board = function(nplayers, dealer) {
 
     this.removeWinner = function(winnerId) {
         let currentPlayerId = this.getCurrentPlayerId();
-        var index = activePlayersIds.indexOf(winnerId);
+        let index = activePlayersIds.indexOf(winnerId);
         activePlayersIds.splice(index,1);
         currentTurn = activePlayersIds.indexOf(currentPlayerId);
     };
@@ -60,13 +60,13 @@ exports.Board = function(nplayers, dealer) {
         initialized = true;
     };
 
-    var resetDelear = function() {
+    const resetDelear = function() {
         temp = stack.pop();
         dealer.returnCards(stack);
         stack = [temp];
     };
 
-    var getCards = function(n) {
+    const getCards = function(n) {
         var newCards = [];
         for (let i = 0; i < n; i++) {
             if (dealer.isEmpty()) resetDelear();
@@ -106,12 +106,12 @@ exports.Board = function(nplayers, dealer) {
         endTurn();
     }
 
-    var advanceTurn = function() {
+    const advanceTurn = function() {
         currentTurn += direction;
         currentTurn = (currentTurn + activePlayersIds.length) % activePlayersIds.length;  
     };
 
-    var endTurn = function() {
+    const endTurn = function() {
         // if (!lastPlayedCard)
         //     return advanceTurn();
         

@@ -5,12 +5,12 @@ const cardsModule = require('./cards.js');
 exports.GamePlayer = function(name,id,state) {
     this.name = name;
     this.state = state;
-    var cards = [];
+    let cards = [];
     this.type = 'human';
     this.id = id;
     this.numTurns = 0;
     this.totalTime = 0;
-    var win = -1;
+    let win = -1;
 
     this.setWin = function(win) {
         this.win = win;
@@ -55,7 +55,7 @@ exports.GamePlayer = function(name,id,state) {
         return cards.length > 0;
     };
 
-    var getCardIndex = function(card) {
+    const getCardIndex = function(card) {
         for (let i = 0; i < cards.length; i++) {
             if (cards[i].type === card.type) {
                 if (card.type === cardTypes.Color || card.type === cardTypes.SuperTaki)
