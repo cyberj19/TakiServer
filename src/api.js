@@ -37,7 +37,7 @@ exports.APIServer = function(params, taki) {
 
     app.get('/api/view', function(request, response, next) {
         console.info('GET from VIEW API');
-        response.status(200).send(taki.getView());
+        response.status(200).send(JSON.stringify( taki.getView()));
     });
 
     app.get('/api/game', function(request, response, next) {
@@ -111,13 +111,13 @@ exports.APIServer = function(params, taki) {
     });
 
     app.post('/api/login', function(request, response, next) {
-        var name = request.body.name;
+        const name = request.body.name;
 
         console.info('New login request from ' + name);
-        var res = taki.registerPlayer({name: request.body.name});
+        const res = taki.registerPlayer({name: request.body.name});
 
         if (!res.success) {
-            response.status(400).send(res);
+            response.status(402).send(res);
             console.warn('Login failed. Error code ' + res.error);
         } else {
             request.session.player = {name: name};
