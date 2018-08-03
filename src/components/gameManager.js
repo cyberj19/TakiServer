@@ -116,10 +116,13 @@ class GameManager extends React.Component {
                 this.setState({settingsModal: false, loggedIn: true})
             },
             response => {
-                if (response.status === 402) {
+                console.log(response);
+                if (response.status === 400) {
                     this.setState(() => ({playerErrorMessage: "User name already exist, please try another one"}));
                 }
-                this.setState(() => ({playerErrorMessage: "Unkown error try again later"}));
+                else {
+                    this.setState(() => ({playerErrorMessage: "Unkown error try again later"}));
+                }
             }
         );
 

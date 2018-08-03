@@ -117,7 +117,7 @@ exports.APIServer = function(params, taki) {
         const res = taki.registerPlayer({name: request.body.name});
 
         if (!res.success) {
-            response.status(402).send(res);
+            response.status(400).send(res);
             console.warn('Login failed. Error code ' + res.error);
         } else {
             request.session.player = {name: name};
