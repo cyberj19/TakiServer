@@ -103,12 +103,8 @@ exports.Game = function(gameName, creator, requiredPlayers) {
         }
         let boardView = board.getView();
         if (boardView.initialized) {
-            gameView.activeTwo = boardView.special_modes.take2;
-            gameView.heap = [boardView.stack_top];
-            gameView.direction = boardView.turn.direction;
-            gameView.isTaki = boardView.special_modes.taki;
+            gameView = {...gameView, ...boardView};
         }
-
         return gameView;
     };
 

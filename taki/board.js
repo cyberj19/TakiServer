@@ -13,6 +13,8 @@ exports.GetTakiBoard = function(nplayers) {
 }
 
 exports.Board = function(nplayers, dealer) {
+    let me = this;
+
     let initialized = false;
     let stack = [];
     let direction = 1;
@@ -23,27 +25,27 @@ exports.Board = function(nplayers, dealer) {
     let numPlayers = nplayers;
     let activePlayersIds = [];
 
-    this.getTop = function() {
+    me.getTop = function() {
         return stack[stack.length - 1];
     }; 
 
-    this.removeWinner = function(winnerId) {
-        let currentPlayerId = this.getCurrentPlayerId();
+    me.removeWinner = function(winnerId) {
+        let currentPlayerId = me.getCurrentPlayerId();
         let index = activePlayersIds.indexOf(winnerId);
         activePlayersIds.splice(index,1);
         currentTurn = activePlayersIds.indexOf(currentPlayerId);
     };
 
-    this.getCurrentPlayerId = function() {
+    me.getCurrentPlayerId = function() {
         return activePlayersIds[currentTurn];
     };
 
-    this.getView = function() {
+    me.getView = function() {
         if (!initialized) return {initialized: false};
         return {
             initialized: true,
             deck_empty: dealer.isEmpty(),
-            stack_top: this.getTop(),
+            stack_top: me.getTop(),
             turn: {
                 currentPlayerId: activePlayersIds[currentTurn],
                 direction: direction
@@ -55,9 +57,10 @@ exports.Board = function(nplayers, dealer) {
         };
     };
 
-    this.initialize = function(playerIds) {
+    me.initialize = function(playerIds) {
         stack.push(dealer.getFirstCard());
-        activePlayerIds = playerIds;
+        activePlayersIds = playerIds;
+        currentTurn = 0;
         initialized = true;
     };
 
@@ -75,9 +78,9 @@ exports.Board = function(nplayers, dealer) {
         }
         return newCards;
     }
-    this.isTakiMode = function() {return takiMode;}
+    me.isTakiMode = function() {return takiMode;}
 
-    this.dealCard = function(n) {
+    me.dealCard = function(n) {
         var cardsToDraw = 1;
         if (n) {
             cardsToDraw = n;
@@ -87,22 +90,22 @@ exports.Board = function(nplayers, dealer) {
         return getCards(cardsToDraw);
     };
 
-    this.isCardElligible = function(card) {
-        return cards.isElligible(card, this.getTop());
+    me.isCardElligible = function(card) {
+        return cards.isElligible(card, me.getTop());
     };
 
-    this.takeCard = function() {
-        let cards = this.dealCard();
+    me.takeCard = function() {
+        let cards = me.dealCard();
         endTurn();
         return cards;
     }
-    this.placeCard = function(card) {
+    me.placeCard = function(card) {
         stack.push(card);
         lastPlayedCard = card;
         endTurn();
     };
 
-    this.endTaki = function() {
+    me.endTaki = function() {
         takiMode = false;
         endTurn();
     }

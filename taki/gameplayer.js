@@ -3,71 +3,74 @@ const cardTypes = consts.cardTypes;
 const cardsModule = require('./cards.js');
 
 exports.GamePlayer = function(name,id,state) {
-    this.name = name;
-    this.state = state;
+    let me = this;
+
+    me.name = name;
+    me.state = state;
     let cards = [];
-    this.type = 'human';
-    this.id = id;
-    this.numTurns = 0;
-    this.totalTime = 0;
-    this.avgTimePerTurn = 0;
+    me.type = 'human';
+    me.id = id;
+    me.numTurns = 0;
+    me.totalTime = 0;
+    me.avgTimePerTurn = 0;
 
     let turnStartTime = 0;
     let win = -1;
 
-    this.startTurn = function() {
+    me.startTurn = function() {
         turnStartTime = Math.floor(Date.now()/1000);
     }
 
-    this.endTurn = function() {
-        this.numTurns++;
+    me.endTurn = function() {
+        me.numTurns++;
         let cts = Math.floor(Date.now()/1000);
-        this.totalTime += cts-turnStartTime;
-        this.avgTimePerTurn = this.totalTime*1.0/this.numTurns;
+        me.totalTime += cts-turnStartTime;
+        me.avgTimePerTurn = me.totalTime*1.0/me.numTurns;
 
     }
-    this.setWin = function(win) {
-        this.win = win;
+    me.setWin = function(win) {
+        me.win = win;
     }
-    this.hasElligibleCards = function(currentCard) {
+    me.hasElligibleCards = function(currentCard) {
         return cards.some(c=>cardsModule.isElligible(c,currentCard));
     };
 
     const getView = function(currentPlayerId) {
         return {
-            name: this.name,
+            name: me.name,
             cards: cards,
-            type: this.type,
-            id: this.id,
-            turn: this.id === currentPlayerId,
+            type: me.type,
+            id: me.id,
+            turn: me.id === currentPlayerId,
             win: win,
-            numTurns: this.numTurns,
-            avgTimePerTurn: this.avgTimePerTurn
+            numTurns: me.numTurns,
+            avgTimePerTurn: me.avgTimePerTurn
         };        
     }
-    this.getSelfView = function(currentPlayerId) {
-        return getView();
+    me.getSelfView = function(currentPlayerId) {
+        let view = getView(currentPlayerId);
+        return view;
     };
 
-    this.getOpponentView = function(currentPlayerId) {
-        let view = getView();
+    me.getOpponentView = function(currentPlayerId) {
+        let view = getView(currentPlayerId);
         view.cards = cards.map(c=>{
             return {};
         });
         return view;
     };
 
-    this.getSummaryView = function() {
+    me.getSummaryView = function() {
         return {
-            name: this.name,
+            name: me.name,
             turnsWithOneCard: 1,
-            numTurns: this.numTurns,
-            avgTimePerTurn: this.avgTimePerTurn,
+            numTurns: me.numTurns,
+            avgTimePerTurn: me.avgTimePerTurn,
             win: win
         }
     };
 
-    this.hasCards = function() {
+    me.hasCards = function() {
         return cards.length > 0;
     };
 
@@ -82,18 +85,18 @@ exports.GamePlayer = function(name,id,state) {
         return -1;
     };
 
-    this.getCard = function(card) {
+    me.getCard = function(card) {
         console.log(card);
         var index = getCardIndex(card);
         if (index === -1) return undefined;
         return card;
     };
 
-    this.addCards = function(newCards) {
+    me.addCards = function(newCards) {
         newCards.forEach(c => cards.push(c));
     };
 
-    this.removeCard = function(card) {
+    me.removeCard = function(card) {
         var index = getCardIndex(card);
         if (index !== -1) cards.splice(index, 1);
     };
