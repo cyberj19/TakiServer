@@ -4,9 +4,9 @@ import {
     PLAYER_TYPE,
     OPP_TYPE,
     ACTION_CHOOSE_CARD,
-    ACTION_INIT_PACK,
-    ACTION_PULL_CARD,
-    TOURNAMENS_GAME,
+    MOVE_TAKE,
+    MOVE_TAKI,
+    MOVE_CARD,
 } from '../helpers/constants';
 import {
     cardsColors,
@@ -21,6 +21,7 @@ import {getText} from "../modules/texts.mjs";
 import Dialog from "./dialog";
 import EndGameDialog from "./endGameDialog";
 import Heap from "./heap";
+import {apiCall} from "../helpers/http";
 
 class GamePlay extends React.Component {
     constructor(props) {
@@ -33,6 +34,7 @@ class GamePlay extends React.Component {
         };
 
         this.endTaki = this.endTaki.bind(this);
+        this.leaveGame = this.leaveGame.bind(this);
         this.getPlayer = this.getPlayer.bind(this);
         this.setHeap = this.setHeap.bind(this);
         this.setStack = this.setStack.bind(this);
@@ -57,53 +59,13 @@ class GamePlay extends React.Component {
     }
 
     pullFromStack() {
-        /*if (!this.playerHasEligibleCard(true)) {
-            this.setState({activeTurn: false});
-
-            const {turn, players, lastAction} = this.state,
-                takeCards = window.setInterval(() => {
-                    const {twoInAction, heap} = this.state,
-                        newCard = this.pullCard();
-                    let tempTakenCardsArr = [...this.state.takenCardsArr],
-                        newPlayers = [...players],
-                        newCards = [...players[turn].cards, {...newCard}],
-                        newMoves = [...players[turn].moves];
-
-                    if (!twoInAction) {
-                        this.nextTurn();
-
-                        newMoves.push({
-                            type: ACTION_PULL_CARD,
-                            playerType: players[turn].type,
-                            cards: players.map(player => ({playerType: player.type, cards: (player.type === players[turn].type ? newCards : player.cards).map(card => ({...card}))})),//,
-                            time: lastAction,
-                            heapCard: {...heap[heap.length - 1]},
-                            duration: performance.now() - lastAction,
-                        });
-                        newPlayers[turn] = {...newPlayers[turn], cards: [...newCards, ...tempTakenCardsArr], moves: [...newMoves]};
-                        window.clearInterval(takeCards);
-
-                        this.setState({
-                            players: [...newPlayers],
-                            twoInAction: 0,
-                            activeTurn: true,
-                            lastAction: performance.now(),
-                            activeAction: null,
-                            takenCardsArr: []
-                        });
-                    }
-                    else {
-                        this.setState({
-                            players: [...newPlayers],
-                            twoInAction: twoInAction === 2 ? 0 : twoInAction - 1,
-                            takenCardsArr: [...tempTakenCardsArr, {...newCard}]
-                        });
-                    }
-                }, 60);
+        if (!this.playerHasEligibleCard(true)) {
+            const {playerName, gameObj : {name}} = this.props;
+            apiCall('move', {player: playerName, game: name, move: MOVE_TAKE}, ()=> {}, this.cantPullCard);
         }
         else {
             this.cantPullCard();
-        }*/
+        }
     }
 
     getPlayer() {
@@ -120,16 +82,12 @@ class GamePlay extends React.Component {
     }
 
     endTaki() {
-        /*this.setState({activeTurn: false});
-        const {heap} = this.state,
-            topCard = heap[heap.length - 1];
-
-        this.nextTurn([CARDS.STOP, CARDS.PLUS].indexOf(topCard.type) > -1 ? 2 : 1);
-        this.setState({
-            activeAction: topCard.type === CARDS.TWO ? CARDS.TWO : null,
-            twoInAction: topCard.type === CARDS.TWO ? 2 : 0,
-            activeTurn: true
-        });*/
+        const {playerName, gameObj : {name}} = this.props;
+        apiCall('move', {player: playerName, game: name, move: MOVE_TAKI});
+    }
+    leaveGame() {
+        const {playerName, gameObj : {name}} = this.props;
+        apiCall('leaveGame', {player: playerName, game: name});
     }
 
 
@@ -207,7 +165,7 @@ class GamePlay extends React.Component {
             });
             return true;
         }
-        return false;*/
+        return false;
     }
 
     calcEndGameScore(winner) {
@@ -321,10 +279,10 @@ class GamePlay extends React.Component {
     render() {
         const {endGameFn, gameType, gameObj, playerName} = this.props,
             {cantPullModal, startTime} = this.state,
-            {players, heap, winner, turn, tourScores, activeTwo,
+            {players, heap, winner, tourScores, activeTwo,
                 isTaki, state} = gameObj;
 
-        if (state === 'Active') {
+        if (state !== 'Pending') {
             const topCard = heap[heap.length - 1],
                 player = this.getPlayer(),
                 deckProps = i => ({
@@ -335,7 +293,7 @@ class GamePlay extends React.Component {
                     isCardEligible: this.isCardEligible,
                     heapCard: topCard,
                     pullCard: this.pullFromStack,
-                    endTaki: i === turn && takiMode && this.endTaki
+                    endTaki: player.turn && isTaki && this.endTaki
                 });
 
             return (<div className="board">
@@ -353,7 +311,7 @@ class GamePlay extends React.Component {
                 <Heap heap={heap}/>
             </div>);
         }
-        return <div>Loading...</div>
+        return <div>Game is pending, <br/> <br/> Until it start you can <span onClick={this.leaveGame} className="leave-game-btn">Leave it</span></div>
     }
 }
 export default GamePlay;

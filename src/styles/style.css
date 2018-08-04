@@ -351,6 +351,14 @@ li.clock::before {
     -o-transform: rotate(-35deg);
     transform: rotate(-35deg);
 }
+
+.leave-game-btn {
+    color: #FFF;
+    cursor: pointer;
+    box-shadow: 0 0 6px rgba(0, 0, 0, 0.39);
+    background: #0087ff;
+    padding: 5px;
+}
 .deck.opp > .card:first-of-type::before {
     background: red;
 }
