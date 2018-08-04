@@ -61,3 +61,4 @@ typings/
 .next
 taki/game.js
 src/components/gameManager.js
+src/helpers/http.js
