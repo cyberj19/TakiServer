@@ -3,7 +3,8 @@ const urls = {
     logout: {url: '/api/logout', method: 'POST'},
     newGame: {url: '/api/game/create', method: 'POST'},
     view: {url: '/api/view', method: 'GET'},
-    joinGame: {url: '/api/join', method: 'POST'} 
+    joinGame: {url: '/api/join', method: 'POST'},
+    deleteGame: {url: '/api/game/remove', method: 'POST'}
 };
 
 
