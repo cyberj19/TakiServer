@@ -81,6 +81,7 @@ exports.APIServer = function(params, taki) {
             response.status(200).send(res);
         } else {
             console.warn('Player request to join game denied');
+            console.log(res);
             response.status(400).send(res);
         }
     });

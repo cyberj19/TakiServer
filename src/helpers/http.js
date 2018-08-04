@@ -2,7 +2,7 @@ const urls = {
     login: {url: '/api/login', method: 'POST'},
     logout: {url: '/api/logout', method: 'POST'},
     newGame: {url: '/api/game/create', method: 'POST'},
-    view: {url: '/api/view', method: 'GET'},
+    view: {url: '/api/view?player=<player>', method: 'GET'},
     joinGame: {url: '/api/join', method: 'POST'} 
 };
 
@@ -16,8 +16,16 @@ const urls = {
  */
 export const apiCall = (type, body, callback, errorFn) => {
     const {url, method} = urls[type];
+
+    let uurl = url;
+    if (method === 'GET') {
+
+        for (let param of Object.keys(body)) {
+            uurl = uurl.replace('<' + param + '>', body[param]);
+        }
+    }
     console.log(body);
-    fetch(url, {
+    fetch(uurl, {
         method,
         headers: {
             'Accept': 'application/json',

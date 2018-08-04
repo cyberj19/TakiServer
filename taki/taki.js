@@ -46,7 +46,7 @@ exports.Taki = function () {
 
         players.splice(index, 1);
 
-        for (let game in games) {
+        for (let game of games) {
             if (game.removePlayer(params.name))
                 break;
         }
@@ -103,25 +103,22 @@ exports.Taki = function () {
         });
     };
 
-    const getGameView = function (gameName) {
+    const getGameView = function (gameName, playerName) {
         const game = games.find(g => g.name === gameName);
 
         return {
             success: true,
-            game: game.getView(params)
+            game: game.getView(playerName)
         };
     };
 
     const getPlayerView = function (playerName) {
         const player = players.find(p => p.name === playerName);
-        if (!player) return {
-            success: false,
-            error: errors.PLAYER_UNKNOWN
-        };
+        if (!player) return getMainView();
         if (player.state === playerStates.Idle) {
             return getMainView();
         }
-        return getGameView(player.currentGame);
+        return getGameView(player.currentGame, playerName);
 
     }
     this.getView = function (playerName) {

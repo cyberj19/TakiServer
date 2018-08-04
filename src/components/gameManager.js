@@ -57,7 +57,7 @@ class GameManager extends React.Component {
     }
 
     getViews() {
-        apiCall('view', {}, this.setView);
+        apiCall('view', {player: this.state.playerName}, this.setView);
     }
 
     startViewMode(stats) {
@@ -156,10 +156,12 @@ class GameManager extends React.Component {
     }
 
     render() {
-        const {currentGameType, viewMode, availableGames, players,
+        
+        const {currentGameType, viewMode, availableGames, vplayers,
             loggedIn, currentGameId, playerName, settingsModal, newGameModal,
             playerErrorMessage, computerName} = this.state;
-
+        const players = this.state.players;
+        console.log(players);
         return (viewMode ? this.getViewMode(viewMode)
             : (currentGameType && currentGameId !== null) ?
                 <GamePlay computerName={computerName} gameType={currentGameType} gameId={currentGameId}

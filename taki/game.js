@@ -38,7 +38,7 @@ exports.Game = function(params) {
     };
     
     this.getView = function(player) {
-        if (state === gameStates.Finishing) return getFinishView(player);
+        if (this.state === gameStates.Finishing) return getFinishView(player);
         else return getActiveView(player);
     }
 
@@ -60,44 +60,52 @@ exports.Game = function(params) {
         } else {
             vplayers = players.map(p => p.getSelfView(board.getCurrentPlayerId()));
         }
-
-        return {
+        let gameView = {
             name: this.name,
             state: this.state,
 
-            activeTwo: boardView.special_modes.take2,
-            heap: [boardView.stack_top],
-            direction: boardView.turn.direction,
-            isTaki: boardView.special_modes.taki,
-
+            winners: winners,
             players: vplayers,
             observers: observers,
             messages: messages
-        };
+        }
+        
+        let boardView = board.getView();
+        if (boardView.initialized) {
+            gameView.activeTwo = boardView.special_modes.take2;
+            gameView.heap = [boardView.stack_top];
+            gameView.direction = boardView.turn.direction;
+            gameView.isTaki = boardView.special_modes.taki;
+        }
+
+        return gameView;
     };
 
     const getPlayerView = function(player) {
         let currentPlayerId = board.getCurrentPlayerId();
-        let playerViews = players.map(p => function() {
+        let playerViews = players.map(p => {
             if (p.name === player) return p.getSelfView(currentPlayerId);
             else return p.getOpponentView(currentPlayerId);
         });
 
-        let boardView = board.getView();
-        return {
+        let gameView = {
             name: this.name,
             state: this.state,
 
-            activeTwo: boardView.special_modes.take2,
-            heap: [boardView.stack_top],
-            direction: boardView.turn.direction,
-            isTaki: boardView.special_modes.taki,
-            
             winners: winners,
             players: playerViews,
             observers: observers,
             messages: messages
-        };
+        }
+        let boardView = board.getView();
+        if (boardView.initialized) {
+            gameView.activeTwo = boardView.special_modes.take2;
+            gameView.heap = [boardView.stack_top];
+            gameView.direction = boardView.turn.direction;
+            gameView.isTaki = boardView.special_modes.taki;
+        }
+
+        return gameView;
     };
 
     const isPlayerInGame = function(player) {

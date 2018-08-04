@@ -39,8 +39,9 @@ exports.Board = function(nplayers, dealer) {
     };
 
     this.getView = function() {
-        if (!initialized) return {};
+        if (!initialized) return {initialized: false};
         return {
+            initialized: true,
             deck_empty: dealer.isEmpty(),
             stack_top: this.getTop(),
             turn: {
