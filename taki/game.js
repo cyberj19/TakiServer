@@ -140,7 +140,7 @@ exports.Game = function(gameName, creator, requiredPlayers) {
         if (!board.isCardElligible(card)) return {success: false, error: errors.MOVE_ILLEGAL};
 
         board.placeCard(card);
-        player.removeCard(card);
+        player.removeCard(cardIndex);
         return {success: true};
     };
 
