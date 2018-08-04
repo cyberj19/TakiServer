@@ -56,9 +56,6 @@ exports.Taki = function () {
         };
     };
 
-    const removeGameAtIndex = function (gameIndex) {
-
-    }
 
     this.removeGame = function (gameToRemove, creatorName) {
         let index = games.findIndex(game => game.name === gameToRemove);
@@ -108,6 +105,7 @@ exports.Taki = function () {
 
         return {
             success: true,
+            state: playerStates.InGame,
             game: game.getView(playerName)
         };
     };
@@ -133,7 +131,8 @@ exports.Taki = function () {
         return {
             success: true,
             games: games.map(g => g.getOverview()),
-            players: players
+            players: players,
+            state: playerStates.Idle
         };
     };
 
@@ -151,7 +150,7 @@ exports.Taki = function () {
             };
 
 
-        const newGame = new Game.Game(params);
+        const newGame = new Game.Game(params.game, params.player, params.required_players);
 
         games.push(newGame);
 
@@ -173,7 +172,7 @@ exports.Taki = function () {
             error: errors.PLAYER_UNKNOWN
         };
 
-        const res = game.add(params);
+        const res = game.addPlayer(params.player, params.asObserver);
 
         if (!res.success) return res;
 

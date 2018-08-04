@@ -25,7 +25,7 @@ class GameChooser extends React.Component {
         const {name, observers, players, required, state, created_by, player} = this.props;
 
         return (
-            <div onClick={this.joinGame}
+            <div 
                  className={`game-chooser game-chooser--${state}`}>
                 {name}
                 <div className="game-chooser__actions">

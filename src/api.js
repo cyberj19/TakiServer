@@ -119,6 +119,7 @@ exports.APIServer = function(params, taki) {
     });
     app.post('/api/game/create', function(request, response, next) {
         console.info('New game create request');
+        console.debug(request.body);
         const player = request.body.player;
         const game = request.body.game;
         const required_players = request.body.required_players;

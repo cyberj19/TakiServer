@@ -7,10 +7,12 @@ const playerStates = consts.playerStates;
 const Board = require('./board.js');
 const GamePlayer = require('./gameplayer.js').GamePlayer;
 
-exports.Game = function(params) {
-    this.name = params.game;
-    this.createdBy = params.player;
-    this.state = gameStates.Pending;
+exports.Game = function(gameName, creator, requiredPlayers) {
+    let me = this;
+
+    me.name = gameName;
+    me.createdBy = creator;
+    me.state = gameStates.Pending;
     let round = -1;
 
     let winners = [];
@@ -20,25 +22,25 @@ exports.Game = function(params) {
     let observers = [];
     let messages = [];
     
-    let board = Board.GetTakiBoard(params.required_players);
+    let board = Board.GetTakiBoard(requiredPlayers);
 
-    const requiredPlayers = params.required_players;
+    // const requiredPlayers = requiredPlayers;
     let activePlayers = 0;
 
-    this.getOverview = function() {
+    me.getOverview = function() {
         return {
-            name: this.name,
-            state: this.state,
+            name: me.name,
+            state: me.state,
             players: players.length,
             observers: observers.length,
             required: requiredPlayers,
-            created_by: this.createdBy,
+            created_by: me.createdBy,
             current_round: round
         }
     };
     
-    this.getView = function(player) {
-        if (this.state === gameStates.Finishing) return getFinishView(player);
+    me.getView = function(player) {
+        if (me.state === gameStates.Finishing) return getFinishView(player);
         else return getActiveView(player);
     }
 
@@ -50,7 +52,9 @@ exports.Game = function(params) {
         }
         activePlayers = players.length;
         round++;
-        state = gameStates.Active;        
+        me.state = gameStates.Active;        
+        
+        console.log('Game ' + me.name + ' has started');
     };
 
     const getObserverView = function() {
@@ -61,8 +65,8 @@ exports.Game = function(params) {
             vplayers = players.map(p => p.getSelfView(board.getCurrentPlayerId()));
         }
         let gameView = {
-            name: this.name,
-            state: this.state,
+            name: me.name,
+            state: me.state,
 
             winners: winners,
             players: vplayers,
@@ -89,8 +93,8 @@ exports.Game = function(params) {
         });
 
         let gameView = {
-            name: this.name,
-            state: this.state,
+            name: me.name,
+            state: me.state,
 
             winners: winners,
             players: playerViews,
@@ -126,7 +130,7 @@ exports.Game = function(params) {
 
     const getFinishView = function(player) {
         return {
-            name: this.name,
+            name: me.name,
             round: round,
             players: players.map(p => p.getSummaryView()),
             winner: winners
@@ -158,7 +162,7 @@ exports.Game = function(params) {
         return {success: true};
     };
 
-    this.move = function(params) {
+    me.move = function(params) {
         console.log('game.playerMove: ' + params);
         let player = players.find(p => p.name === params.player);
         if (!player) return {success:false, error: errors.PLAYER_UNKNOWN};
@@ -202,16 +206,16 @@ exports.Game = function(params) {
         activePlayers--;
     }
 
-    this.add = function(params) {
-        if (this.state !== gameStates.Pending) return {success: false, error: errors.GAME_ALREADY_STARTED};
-        if (isPlayerInGame(params.player)) return {success: false, error: errors.GAME_PLAYER_ALREADY_IN_GAME};
+    me.addPlayer = function(player, asObserver) {
+        if (me.state !== gameStates.Pending) return {success: false, error: errors.GAME_ALREADY_STARTED};
+        if (isPlayerInGame(player)) return {success: false, error: errors.GAME_PLAYER_ALREADY_IN_GAME};
 
-        if (params.asObserver) {
-            observers.push({name: params.player});
+        if (asObserver) {
+            observers.push({name: player});
             return {success: true};
         }
 
-        let gamePlayer = new GamePlayer(params.player, playersCount++, playerStates.Pending);
+        let gamePlayer = new GamePlayer(player, playersCount++, playerStates.Pending);
         players.push(gamePlayer);
         if (players.length === requiredPlayers) {
             start();
@@ -228,7 +232,7 @@ exports.Game = function(params) {
         return {success: false, error: errors.GAME_CANNOT_LEAVE_WHILE_PLAYING};
     };
 
-    this.removePlayer = function(player) {
+    me.removePlayer = function(player) {
         let index = players.findIndex(p => p.name === player);
         if (index !== -1) return removePlayerAtIndex(index);
 
@@ -241,7 +245,7 @@ exports.Game = function(params) {
         return {success: false, error: errors.PLAYER_UNKNOWN};
     }
 
-    this.message = function(params) {
+    me.message = function(params) {
         let index = players.findIndex(p => p.name === params.player);
         if (index === -1) return {success: false, error: errors.PLAYER_UNKNOWN};
 
