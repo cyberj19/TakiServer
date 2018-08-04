@@ -44,8 +44,9 @@ exports.Board = function(nplayers, dealer) {
         if (!initialized) return {initialized: false};
         return {
             initialized: true,
-           // isDeckEmpty: dealer.isEmpty(),
-            heap: [me.getTop()],
+            // isDeckEmpty: dealer.isEmpty(),
+            // heap: [me.getTop()],
+            heap: stack,
             direction: direction,
             activeTwo: take2Counter,
             isTaki: takiMode
