@@ -1,7 +1,8 @@
 const urls = {
-  login: {url: '/api/login', method: 'POST'},
-  logout: {url: '/api/logout', method: 'POST'},
-  view: {url: '/api/view', method: 'GET'},
+    login: {url: '/api/login', method: 'POST'},
+    logout: {url: '/api/logout', method: 'POST'},
+    newGame: {url: '/api/create', method: 'POST'},
+    view: {url: '/api/view', method: 'GET'},
 };
 
 
@@ -25,11 +26,11 @@ export const apiCall = (type, body, callback, errorFn) => {
     }).then(response => {
         response.json().then(
             json => {
-                let parsedResponse = {
+                const parsedResponse = {
                     status: response.status,
                     body: json
-                }
-                if (response.ok) return callback(parsedResponse);
+                };
+                if (response.ok) return callback && callback(parsedResponse);
                 return errorFn && errorFn(parsedResponse);
             }
         )

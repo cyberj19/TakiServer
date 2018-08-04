@@ -131,6 +131,8 @@ li.clock::before {
 .menu li.exit::before,
 .menu li.next::before,
 .menu li.pre::before,
+.menu li.logout::before,
+.menu li.newgame::before,
 .menu li.settings::before {
     font-size: 55px;
     display: inline-block;
@@ -147,6 +149,12 @@ li.clock::before {
 }
 .menu li.settings::before {
     content: '\1f6e0';
+}
+.menu li.newgame::before {
+    content: '\272f';
+}
+.menu li.logout::before {
+    content: '\2297';
 }
 .menu li.exit::before {
     content: '\2716';
@@ -650,12 +658,14 @@ li.clock::before {
 /*********************************/
 /*     dialog color chooser      */
 /*********************************/
+.dialog input[type=radio][name=number],
 .dialog input[type=radio][name=color] {
     opacity: 0;
     position: absolute;
     pointer-events: none;
 }
 
+.dialog input[type=radio][name=number] + label,
 .dialog input[type=radio][name=color] + label {
     color: transparent;
     display: inline-block;
@@ -668,17 +678,25 @@ li.clock::before {
     border-radius: 2px;
 }
 
+.dialog input[type=radio][name=number] + label {
+    color: #ffffff;
+    font-size: 38px;
+    line-height: 76px;
+    vertical-align: middle;
+}
 .dialog input[type=radio][name=color][value=red] + label { background: #FC2314;}
 .dialog input[type=radio][name=color][value=blue] + label { background: #4CBBDB;}
 .dialog input[type=radio][name=color][value=yellow] + label { background: #F9F90F;}
 .dialog input[type=radio][name=color][value=green] + label { background: #69B727;}
 
+.dialog input[type=radio][name=number]:checked + label,
 .dialog input[type=radio][name=color]:checked + label {
     box-shadow: 0 0 5px rgba(0, 0, 0, 0.59);
     position: relative;
     border-color: #fff;
 }
 
+.dialog input[type=radio][name=number]:checked + label:after,
 .dialog input[type=radio][name=color]:checked + label:after {
     content: "\2713";
     display: inline-block;
@@ -692,6 +710,10 @@ li.clock::before {
     width: 100%;
 }
 
+
+.dialog input[type=radio][name=number]:checked + label:after {
+    opacity: .7;
+}
 /************************************/
 /*******        Stats view    *******/
 /************************************/
@@ -776,5 +798,52 @@ li.clock::before {
     filter: progid:DXImageTransform.Microsoft.gradient( startColorstr='#f11717', endColorstr='#b6fd25',GradientType=1 );
 }
 
+/*****************************/
+/*                           */
+/*      Players List         */
+/*                           */
+/*****************************/
 
+.players-list {
+    position: fixed;
+    width: 30%;
+    top: 1vw;
+    color: black;
+    left: 1vw;
+    height: calc(100% - 2vw);
+    background: rgba(255,255,255,0.8);
+    border-radius: 3px;
+    box-shadow: 0 0 7px 4px rgba(0,0,0,0.2);
+    display: inline-block;
+    overflow-y: auto;
+    overflow-x: hidden;
+}
 
+.players-list h2 {
+    padding: 22px 0;
+    border-bottom: 1px solid #AAA;
+    margin: 0 0 22px;
+}
+
+.players-list > div.me {
+    background: rgba(12,233,200,.3);
+}
+.players-list > div {
+    padding: 5px;
+    text-align: left;
+}
+/*****************************/
+/*                           */
+/*      Games List         */
+/*                           */
+/*****************************/
+
+.games-list {
+    position: fixed;
+    left: calc(30% + 2vw);
+    top: 1vw;
+    overflow-x: hidden;
+    overflow-y: auto;
+    height: calc(100% - 2vw);
+    width: calc(70% - 3vw - 85px);
+}

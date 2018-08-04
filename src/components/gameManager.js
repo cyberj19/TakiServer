@@ -4,6 +4,8 @@ import GamePlay from "./gamePlay";
 import GameView from "./gameView";
 import {apiCall} from "../helpers/http";
 import Dialog from "./dialog";
+import NewGameWizard from "./newGameWizard";
+import GameChooser from "./gameChooser";
 import {
     PLAYER_TYPE,
     COMPUTER_TYPE,
@@ -25,8 +27,10 @@ class GameManager extends React.Component {
             viewMode: null,
             playerErrorMessage: null,
             gamesStats: [],
+            players: [],
             availableGames: [],
             settingsModal: true,
+            newGameModal: false,
             pullingInterval: null,
             computerName: getCompName()
         };
@@ -40,7 +44,8 @@ class GameManager extends React.Component {
         this.inputChange = this.inputChange.bind(this);
         this.closeViewMode = this.closeViewMode.bind(this);
         this.startViewMode = this.startViewMode.bind(this);
-        this.renderGameChooser = this.renderGameChooser.bind(this);
+        this.openNewGameModal = this.openNewGameModal.bind(this);
+        this.closeNewGameModal = this.closeNewGameModal.bind(this);
         this.openSettingsModal = this.openSettingsModal.bind(this);
         this.closeSettingsModal = this.closeSettingsModal.bind(this);
     }
@@ -50,7 +55,7 @@ class GameManager extends React.Component {
             window.clearInterval(this.state.pullingInterval);
         }
         if (!oldState.loggedIn && this.state.loggedIn) {
-            this.setState({pullingInterval: window.setInterval(this.getViews, 125)});
+            this.setState({pullingInterval: window.setInterval(this.getViews, 250)});
         }
 
     }
@@ -81,6 +86,8 @@ class GameManager extends React.Component {
     }
 
     setView(response) {
+        const {players, games} = response.body;
+        this.setState({players, availableGames: games});
         console.log(response);
     }
 
@@ -108,6 +115,12 @@ class GameManager extends React.Component {
     openSettingsModal() {
         this.setState({settingsModal: true});
     }
+    openNewGameModal() {
+        this.setState({newGameModal: true});
+    }
+    closeNewGameModal() {
+        this.setState({newGameModal: false});
+    }
 
     closeSettingsModal() {
         apiCall('login',
@@ -117,11 +130,11 @@ class GameManager extends React.Component {
             },
             response => {
                 console.log(response);
-                if (response.status === 400) {
-                    this.setState(() => ({playerErrorMessage: "User name already exist, please try another one"}));
+                if (response.body.error === "PLAYER_NAME_EXISTS") {
+                    this.setState(() => ({playerErrorMessage: getText('playerNameExist')}));
                 }
                 else {
-                    this.setState(() => ({playerErrorMessage: "Unkown error try again later"}));
+                    this.setState(() => ({playerErrorMessage: getText('unknownError')}));
                 }
             }
         );
@@ -132,14 +145,6 @@ class GameManager extends React.Component {
         this.setState({playerName: e.target.value.length ? e.target.value : null});
     }
 
-    renderGameChooser(gameType, id) {
-        return <div onClick={() => this.setGame(gameType, `${id || 0}-${performance.now()}`)}
-                    data-info={getText(gameType + 'ChooserInfo')}
-                    key={gameType + id}
-                    className={`game-chooser game-chooser--${gameType}`}>
-            {getText(gameType + 'Chooser')}
-        </div>;
-    }
 
     getViewMode(gameStatsId) {
         const {gamesStats, playerName, computerName} = this.state;
@@ -149,13 +154,15 @@ class GameManager extends React.Component {
     }
 
     logoutView() {
-        return <div onClick={
-            () => apiCall('logout', {}, () => this.setState({settingsModal: false, loggedIn: false}))
-        } className="button">LOGOUT</div>
+        return <li onClick={() => apiCall('logout', {}, () => this.setState({settingsModal: false, loggedIn: false}))} className="logout">
+                Log out
+            </li>;
     }
 
     render() {
-        const {currentGameType, viewMode, availableGames, loggedIn, currentGameId, playerName, settingsModal, playerErrorMessage, computerName} = this.state;
+        const {currentGameType, viewMode, availableGames, players,
+            loggedIn, currentGameId, playerName, settingsModal, newGameModal,
+            playerErrorMessage, computerName} = this.state;
 
         return (viewMode ? this.getViewMode(viewMode)
             : (currentGameType && currentGameId !== null) ?
@@ -164,20 +171,33 @@ class GameManager extends React.Component {
                           viewMode={this.startViewMode}/>
                 : <div>
                     <ul className="menu">
-                        <li onClick={this.openSettingsModal} className="settings">
-                            Settings
-                        </li>
+
+                        {loggedIn ? this.logoutView() :
+                            <li onClick={this.openSettingsModal} className="settings">
+                                Settings
+                            </li>}
+                        {loggedIn && <li onClick={this.openNewGameModal} className="newgame">
+                            New game
+                        </li>}
                     </ul>
+                    {!!players.length && <div className="players-list">
+                        <h2>{getText('connectedPlayers')}</h2>
+                        {players.map(player => <div className={player.name === playerName ? 'me' : ''}><strong>{player.name}</strong> - {player.state}</div>)}
+                    </div>}
                     <Dialog title={getText('settingsModalTitle')}
                             approveFunction={this.closeSettingsModal}
-                            description={<div>{loggedIn && this.logoutView()}<br/>Name: <input
+                            description={<div><br/>Name: <input
                                 onBlur={this.inputChange}/>{playerErrorMessage && <div>{playerErrorMessage}</div>}
                             </div>}
                             isOpen={settingsModal || !loggedIn}
                             noCancel
                     />
-                    <h1>{getText('gameChooserHeader')}</h1>
-                    {availableGames.map(this.renderGameChooser)}
+                    <NewGameWizard isOpen={newGameModal} closeFn={this.closeNewGameModal} player={playerName}/>
+                    <div className="games-list">
+
+                        <h1>{getText('gameChooserHeader')}</h1>
+                        {!!availableGames.length ? availableGames.map((props, id) => <GameChooser player={playerName} key={id} {...props}/>) : loggedIn ? 'Create new game' : getText('loginFirst')}
+                    </div>
                 </div>)
     }
 }
