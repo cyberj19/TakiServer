@@ -106,8 +106,6 @@ exports.APIServer = function(params, taki) {
         console.info('Game remove request');
         const game = request.body.game;
         const creator=request.body.player;
-        const res = taki.removeGame(game,creator);
-
         taki.removeGame(game,creator, err => {
             if (err) {
                 console.warn('Remove game failed. Error code ' + err);
