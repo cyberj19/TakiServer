@@ -68,12 +68,10 @@ class Deck extends React.Component {
 
     render() {
         const {
-                name, type, numTurns, turn, chooseCard, isCardEligible, gameType,
-                endTaki, gameEnd, viewMode, score
+                name, type, numTurns, turn, chooseCard, isCardEligible,
+                endTaki, gameEnd, viewMode, avgTimePerTurn
             } = this.props,
             {colorModalOpen, chosenCardIndex, chosenColor, cards} = this.state,
-            isTournament = gameType === TOURNAMENS_GAME,
-            avgMoveTime = 0,
             isPlayer = type === PLAYER_TYPE;
 
         return (<div className={`deck ${type} ${turn ? 'active' : ''}`}>
@@ -86,8 +84,7 @@ class Deck extends React.Component {
             <div className="deck-stats">
                 <h2>{name || type}</h2>
                 {numTurns && <h3>{getText('totalMoves')} {numTurns}</h3>}
-                {avgMoveTime ? <h3>{getText('avgMoves')} {toTimeString(avgMoveTime)}</h3> : null}
-                {isTournament && <h3>{getText('tourScore')} {score}</h3>}
+                {avgTimePerTurn ? <h3>{getText('avgMoves')} {toTimeString(avgTimePerTurn)}</h3> : null}
             </div>
             {!!cards.length && cards.map(({type: cardType, color, isIn, isOut}, i) => {
                 const cardEligible = turn && isCardEligible({type: cardType, color}),
