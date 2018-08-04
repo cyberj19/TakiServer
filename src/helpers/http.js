@@ -2,6 +2,7 @@ const urls = {
     login: {url: '/api/login', method: 'POST'},
     logout: {url: '/api/logout', method: 'POST'},
     newGame: {url: '/api/create', method: 'POST'},
+    joinGame: {url: '/api/join', method: 'POST'},
     view: {url: '/api/view', method: 'GET'},
 };
 

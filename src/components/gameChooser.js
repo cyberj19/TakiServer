@@ -1,4 +1,5 @@
 import React from "react";
+import {apiCall} from "../helpers/http";
 
 class GameChooser extends React.Component {
     constructor(props) {
@@ -9,7 +10,9 @@ class GameChooser extends React.Component {
     }
 
     joinGame() {
+        const {name, player} = this.props;
 
+        apiCall('joinGame', {player:  player, game: name});
     }
 
 
@@ -22,7 +25,7 @@ class GameChooser extends React.Component {
                 {name}
                 <div className="game-chooser__actions">
                     {player === created_by && <div className="game-chooser__actions__delete">X</div>}
-                    {state === 'Pending' && <div className="game-chooser__actions__play">Join game</div>}
+                    {state === 'Pending' && <div onClick={this.joinGame} className="game-chooser__actions__play">Join game</div>}
                     {state === 'Active' && <div className="game-chooser__actions__watch">Watch game</div>}
                 </div>
                 <div className="game-chooser__details">
