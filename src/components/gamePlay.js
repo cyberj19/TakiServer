@@ -86,8 +86,8 @@ class GamePlay extends React.Component {
         apiCall('move', {player: playerName, game: name, move: MOVE_TAKI});
     }
     leaveGame() {
-        const {playerName, gameObj : {name}} = this.props;
-        gameObj.state !== 'Active' && apiCall('leaveGame', {player: playerName, game: name});
+        const {playerName, gameObj : {name, state}} = this.props;
+        state !== 'Active' && apiCall('leaveGame', {player: playerName, game: name});
     }
 
 
