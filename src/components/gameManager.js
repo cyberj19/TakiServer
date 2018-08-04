@@ -1,14 +1,13 @@
 import React from "react";
 import {getText, getCompName} from "../modules/texts.mjs";
 import GamePlay from "./gamePlay";
-import GameView from "./gameView";
+//import GameView from "./gameView";
 import {apiCall} from "../helpers/http";
 import Dialog from "./dialog";
 import NewGameWizard from "./newGameWizard";
 import GameChooser from "./gameChooser";
 import {
-    PLAYER_TYPE,
-    COMPUTER_TYPE,
+    REGULAR_GAME,
 } from '../helpers/constants'
 
 class GameManager extends React.Component {
@@ -17,7 +16,7 @@ class GameManager extends React.Component {
 
         this.state = {
             currentGameType: null,
-            currentGameId: null,
+            currentGame: null,
             playerName: null,
             loggedIn: false,
             viewMode: null,
@@ -61,18 +60,18 @@ class GameManager extends React.Component {
     }
 
     startViewMode(stats) {
-        const {currentGameType, currentGameId, gamesStats} = this.state;
+        /*const {currentGameType, currentGame, gamesStats} = this.state;
 
         this.setState({
             gamesStats: [...gamesStats, {
                 stats: JSON.parse(JSON.stringify(stats)),
                 gameType: currentGameType,
-                gameId: currentGameId
+                game: currentGame
             }],
             currentGameType: null,
             currentGameId: null,
-            viewMode: currentGameId
-        });
+            viewMode: currentGame
+        });*/
     }
 
     closeViewMode() {
@@ -82,12 +81,12 @@ class GameManager extends React.Component {
     }
 
     setView(response) {
-        const {players, games} = response.body;
-        this.setState({players, availableGames: games});
+        const {players, games, game} = response.body;
+        this.setState({players, currentGame: game, availableGames: games});
     }
 
     endGame(stats, replay) {
-        const {currentGameType, currentGameId, gamesStats} = this.state;
+        /*const {currentGameType, currentGameId, gamesStats} = this.state;
 
         this.setState({
             gamesStats: [...gamesStats, {
@@ -97,14 +96,14 @@ class GameManager extends React.Component {
             }],
             currentGameType: replay ? currentGameType : null,
             currentGameId: replay ? [currentGameId.split('-')[0], performance.now()].join('-') : null,
-        });
+        });*/
     }
 
     setGame(gameType, id) {
-        this.setState({
+        /*this.setState({
             currentGameType: gameType,
             currentGameId: id
-        });
+        });*/
     }
 
     openSettingsModal() {
@@ -141,10 +140,10 @@ class GameManager extends React.Component {
 
 
     getViewMode(gameStatsId) {
-        const {gamesStats, playerName, computerName} = this.state;
-        return <GameView closeView={this.closeViewMode}
-                         names={{[PLAYER_TYPE]: playerName, [COMPUTER_TYPE]: computerName}}
-                         moves={gamesStats.filter(({gameId}) => gameId === gameStatsId)[0].stats}/>
+        // const {gamesStats, playerName, computerName} = this.state;
+        // return <GameView closeView={this.closeViewMode}
+        //                  names={{[PLAYER_TYPE]: playerName, [COMPUTER_TYPE]: computerName}}
+        //                  moves={gamesStats.filter(({gameId}) => gameId === gameStatsId)[0].stats}/>
     }
 
     logoutView() {
@@ -155,14 +154,14 @@ class GameManager extends React.Component {
 
     render() {
         
-        const {currentGameType, viewMode, availableGames, vplayers,
-            loggedIn, currentGameId, playerName, settingsModal, newGameModal,
-            playerErrorMessage, computerName} = this.state;
+        const {viewMode, availableGames,
+            loggedIn, currentGame, playerName, settingsModal, newGameModal,
+            playerErrorMessage} = this.state;
         const players = this.state.players;
 
-        return (viewMode ? this.getViewMode(viewMode)
-            : (currentGameType && currentGameId !== null) ?
-                <GamePlay computerName={computerName} gameType={currentGameType} gameId={currentGameId}
+        return (viewMode ? ""
+            : (currentGame) ?
+                <GamePlay gameType={REGULAR_GAME} gameObj={currentGame}
                           playerName={playerName} withComputer={true} endGameFn={this.endGame}
                           viewMode={this.startViewMode}/>
                 : <div>
