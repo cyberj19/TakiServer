@@ -9,8 +9,8 @@ const GamePlayer = require('./gameplayer.js').GamePlayer;
 
 exports.Game = function(params) {
     this.name = params.game;
-    const createdBy = params.player;
-    let state = gameStates.Pending;
+    this.createdBy = params.player;
+    this.state = gameStates.Pending;
     let round = -1;
 
     let winners = [];
@@ -28,11 +28,11 @@ exports.Game = function(params) {
     this.getOverview = function() {
         return {
             name: this.name,
-            state: state,
+            state: this.state,
             players: players.length,
             observers: observers.length,
             required: requiredPlayers,
-            created_by: createdBy,
+            created_by: this.createdBy,
             current_round: round
         }
     };
@@ -63,7 +63,7 @@ exports.Game = function(params) {
 
         return {
             name: this.name,
-            state: state,
+            state: this.state,
 
             activeTwo: boardView.special_modes.take2,
             heap: [boardView.stack_top],
@@ -86,7 +86,7 @@ exports.Game = function(params) {
         let boardView = board.getView();
         return {
             name: this.name,
-            state: state,
+            state: this.state,
 
             activeTwo: boardView.special_modes.take2,
             heap: [boardView.stack_top],
@@ -211,7 +211,7 @@ exports.Game = function(params) {
         return {success: true};
     };
 
-    const removePlayer = function(index) {
+    const removePlayerAtIndex = function(index) {
         let player = players[index];
         if (player.state === playerStates.Finished || state === gameStates.Pending) {
             players.splice(index, 1);
@@ -220,11 +220,11 @@ exports.Game = function(params) {
         return {success: false, error: errors.GAME_CANNOT_LEAVE_WHILE_PLAYING};
     };
 
-    this.remove = function(params) {
-        let index = players.findIndex(p => p.name === params.player);
-        if (index !== -1) return removePlayer(index);
+    this.removePlayer = function(player) {
+        let index = players.findIndex(p => p.name === player);
+        if (index !== -1) return removePlayerAtIndex(index);
 
-        index = observers.findIndex(o => o.name === params.player);
+        index = observers.findIndex(o => o.name === player);
         if (index !== -1) {
             observers.splice(index, 1);
             return {success: true};

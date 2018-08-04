@@ -124,7 +124,7 @@ class GameManager extends React.Component {
 
     closeSettingsModal() {
         apiCall('login',
-            {name: this.state.playerName},
+            {player: this.state.playerName},
             () => {
                 this.setState({settingsModal: false, loggedIn: true})
             },
@@ -154,7 +154,7 @@ class GameManager extends React.Component {
     }
 
     logoutView() {
-        return <li onClick={() => apiCall('logout', {player: {name: this.state.name}}, () => this.setState({settingsModal: false, loggedIn: false}))} className="logout">
+        return <li onClick={() => apiCall('logout', {player: this.state.playerName}, () => this.setState({settingsModal: false, loggedIn: false}))} className="logout">
                 Log out
             </li>;
     }

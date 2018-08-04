@@ -1,7 +1,7 @@
 const urls = {
     login: {url: '/api/login', method: 'POST'},
     logout: {url: '/api/logout', method: 'POST'},
-    newGame: {url: '/api/create', method: 'POST'},
+    newGame: {url: '/api/game/create', method: 'POST'},
     view: {url: '/api/view', method: 'GET'},
 };
 
@@ -15,6 +15,7 @@ const urls = {
  */
 export const apiCall = (type, body, callback, errorFn) => {
     const {url, method} = urls[type];
+    console.log(body);
     fetch(url, {
         method,
         headers: {

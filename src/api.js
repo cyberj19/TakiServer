@@ -30,26 +30,33 @@ exports.APIServer = function(params, taki) {
         next();
     }
     
+    app.get('/api/view', function(request, response, next) {
+        let res = taki.getView(request.query.player);
+
+        if (res.success) response.status(200).send(res);
+        else response.status(400).send(res);
+    });
+
     app.get('/api/info', function(request, response, next) {
         console.info('GET from info API');
         response.status(200).send('This is the taki service');
     });
 
-    app.get('/api/view', function(request, response, next) {
-        console.info('GET from VIEW API');
-        response.status(200).send(JSON.stringify( taki.getView()));
-    });
+    // app.get('/api/view', function(request, response, next) {
+    //     console.info('GET from VIEW API');
+    //     response.status(200).send(JSON.stringify(taki.getView()));
+    // });
 
-    app.get('/api/game', function(request, response, next) {
-        console.log(request.query);
-        let res = taki.getGameView({
-            game: request.query.game,
-            player: request.query.player
-        });
+    // app.get('/api/game', function(request, response, next) {
+    //     console.log(request.query);
+    //     let res = taki.getGameView({
+    //         game: request.query.game,
+    //         player: request.query.player
+    //     });
 
-        if (res.success) response.status(200).send(res);
-        else response.status(400).send(res);
-    });
+    //     if (res.success) response.status(200).send(res);
+    //     else response.status(400).send(res);
+    // });
 
     app.post('/api/game/move', function(request, response, next) {
         const params = {
@@ -94,7 +101,22 @@ exports.APIServer = function(params, taki) {
         }
     });
 
-    app.post('/api/create', function(request, response, next) {
+    app.post('/api/game/remove', function(request, response) {
+        console.info('Game remove request');
+        const game = request.body.game;
+        const creator=request.body.player;
+        const res = taki.removeGame(game,creator);
+
+        if (!res.success) {
+            response.status(400).send(res);
+            console.warn('Remove game failed. Error code ' + res.error);
+        } else {
+            //request.session.player = {name: name};
+            console.info('Game removed successfuly');
+            response.status(200).send(res);
+        }
+    });
+    app.post('/api/game/create', function(request, response, next) {
         console.info('New game create request');
         const player = request.body.player;
         const game = request.body.game;
@@ -111,16 +133,16 @@ exports.APIServer = function(params, taki) {
     });
 
     app.post('/api/login', function(request, response, next) {
-        const name = request.body.name;
+        const name = request.body.player;
 
         console.info('New login request from ' + name);
-        const res = taki.registerPlayer({name: request.body.name});
+        const res = taki.registerPlayer({name: name});
 
         if (!res.success) {
             response.status(400).send(res);
             console.warn('Login failed. Error code ' + res.error);
         } else {
-            request.session.player = {name: name};
+            //request.session.player = {name: name};
             console.info('Login successful');
             response.status(200).send(res);
         }
@@ -128,9 +150,9 @@ exports.APIServer = function(params, taki) {
 
 
     app.post('/api/logout', function(request, response, next) {
-        console.info('Logout request from ' + request.session.player.name);
-        taki.removePlayer({name: request.session.player.name});
-        delete request.session.player;
+        console.info('Logout request from ' + request.body.player);
+        taki.removePlayer({name: request.body.player});
+        //delete request.player;
         response.status(200).send({success:true});
     });
 
