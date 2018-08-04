@@ -65,3 +65,5 @@ src/helpers/http.js
 src/components/gameManager.js
 taki/game.js
 taki/game.js
+src/components/gameChooser.js
+.gitignore
