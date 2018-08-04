@@ -92,6 +92,7 @@ exports.Board = function(nplayers, dealer) {
 
     me.takeCard = function() {
         let cards = me.dealCard();
+        lastPlayedCard=me.getTop();
         endTurn();
         return cards;
     }
