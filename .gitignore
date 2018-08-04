@@ -62,3 +62,4 @@ typings/
 taki/game.js
 src/components/gameManager.js
 src/helpers/http.js
+src/components/gameManager.js

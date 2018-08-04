@@ -84,7 +84,6 @@ class GameManager extends React.Component {
     setView(response) {
         const {players, games} = response.body;
         this.setState({players, availableGames: games});
-        console.log(response);
     }
 
     endGame(stats, replay) {
@@ -125,7 +124,6 @@ class GameManager extends React.Component {
                 this.setState({settingsModal: false, loggedIn: true})
             },
             response => {
-                console.log(response);
                 if (response.body.error === "PLAYER_NAME_EXISTS") {
                     this.setState(() => ({playerErrorMessage: getText('playerNameExist')}));
                 }
@@ -161,7 +159,7 @@ class GameManager extends React.Component {
             loggedIn, currentGameId, playerName, settingsModal, newGameModal,
             playerErrorMessage, computerName} = this.state;
         const players = this.state.players;
-        console.log(players);
+
         return (viewMode ? this.getViewMode(viewMode)
             : (currentGameType && currentGameId !== null) ?
                 <GamePlay computerName={computerName} gameType={currentGameType} gameId={currentGameId}
