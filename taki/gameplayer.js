@@ -26,7 +26,8 @@ exports.GamePlayer = function(name,id,state) {
             type: this.type,
             id: this.id,
             turn: this.id === currentPlayerId,
-            win: win
+            win: win,
+            numTurns: this.numTurns
         };
     };
 
@@ -37,7 +38,8 @@ exports.GamePlayer = function(name,id,state) {
             type: this.type,
             id: this.id,
             turn: this.id === currentPlayerId,
-            win: win
+            win: win,
+            numTurns: this.numTurns
         };
     };
 

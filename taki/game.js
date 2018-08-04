@@ -184,7 +184,7 @@ exports.Game = function(gameName, creator, requiredPlayers) {
             result = takeCard(player);
         else 
             return {success: false, error: errors.MOVE_UNAVAILABLE}
-
+        player.numTurns++;
         if (!result.success) return result;        
         
         if (!player.hasCards()) {
