@@ -120,48 +120,16 @@ class GamePlay extends React.Component {
 
     chooseCard(cardIndex, color) {
 
-
-        const {players, turn, heap, activeAction, twoInAction, lastAction, tourScores} = this.state,
-            topCard = heap[heap.length - 1];
-        let tempPlayers = [...players],
-            tempHeap = [...heap],
-            tempCard = {...players[turn].cards[cardIndex]},
-            tempCards = [...players[turn].cards];
+        const {playerName, gameObj : {name}} = this.props,
+            player = this.getPlayer(),
+            tempCard = {...player.cards[cardIndex]};
 
         if (this.isCardEligible(tempCard)) {
-            tempHeap.push({...tempCard, ...{color: tempCard.color === UNCOLORED_COLOR ? (color || topCard.color) : tempCard.color}});
-            tempCards.splice(cardIndex, 1);
-            tempPlayers[turn].moves.push({
-                type: ACTION_CHOOSE_CARD,
-                cards: players.map(player => ({playerType: player.type, cards: (player.type === players[turn].type ? tempCards : player.cards).map(card => ({...card}))})),// [...tempCards],
-                playerType: tempPlayers[turn].type,
-                heapCard: {...tempHeap[tempHeap.length - 1]},
-                time: lastAction,
-                duration: performance.now() - lastAction,
-                chosenCard: {...tempCard, ...{color: tempCard.color === UNCOLORED_COLOR ? (color || topCard.color) : tempCard.color}}
-            });
-            tempPlayers[turn].cards = tempCards;
-            this.setState({players: [...tempPlayers], heap: tempHeap});
-
-            if (tempCard.type === CARDS.TAKI ||
-                tempCard.type === CARDS.PLUS ||
-                activeAction === CARDS.TAKI) {
-                tempCard.type === CARDS.TAKI && this.setState({activeAction: CARDS.TAKI});
-            }
-            else {
-                tempCard.type === CARDS.TWO && this.setState({activeAction: CARDS.TWO, twoInAction: twoInAction + 2});
-                this.nextTurn(tempCard.type === CARDS.STOP ? 2 : 1)
-            }
-            this.setState({
-                ...(!tempCards.length && tempCard.type !== CARDS.PLUS ? {
-                    winner: turn,
-                    endTime: performance.now(),
-                    activeTurn: false,
-                    tourScores: isTournament ? [...tourScores, this.calcEndGameScore(turn)] : null
-                } : {
-                    activeTurn: true
-                }),
-                lastAction: performance.now()
+            apiCall('move', {
+                player: playerName,
+                game: name,
+                move: MOVE_CARD,
+                card: color ? {index: cardIndex, color} : {index: cardIndex}
             });
             return true;
         }
