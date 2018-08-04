@@ -2,7 +2,7 @@ const urls = {
     login: {url: '/api/login', method: 'POST'},
     logout: {url: '/api/logout', method: 'POST'},
     newGame: {url: '/api/game/create', method: 'POST'},
-    view: {url: '/api/view?player=<player>', method: 'GET'},
+    view: {url: '/api/view', method: 'GET'},
     joinGame: {url: '/api/join', method: 'POST'}, 
     deleteGame: {url: '/api/game/remove', method: 'POST'}
 };
@@ -16,17 +16,10 @@ const urls = {
  * @param {function} [errorFn]
  */
 export const apiCall = (type, body, callback, errorFn) => {
-    const {url, method} = urls[type];
+    const {url, method} = urls[type],
+        _url = url + (method === 'GET' ? encodeQueryString(body) : '');
 
-    let uurl = url;
-    if (method === 'GET') {
-
-        for (let param of Object.keys(body)) {
-            uurl = uurl.replace('<' + param + '>', body[param]);
-        }
-    }
-    console.log(body);
-    fetch(uurl, {
+    fetch(_url, {
         method,
         headers: {
             'Accept': 'application/json',
@@ -52,3 +45,13 @@ export const apiCall = (type, body, callback, errorFn) => {
         // return errorFn && errorFn(response);
     });
 };
+
+function encodeQueryString(params) {
+    const keys = Object.keys(params)
+    return keys.length
+        ? "?" + keys
+        .map(key => encodeURIComponent(key)
+            + "=" + encodeURIComponent(params[key]))
+        .join("&")
+        : ""
+}

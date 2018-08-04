@@ -287,6 +287,10 @@ li.clock::before {
 .card[data-card-type="COLOR"]::after {
     content: '\2756';
 }
+.card[data-card-type="CDIR"]::before,
+.card[data-card-type="CDIR"]::after {
+    content: '\2b80';
+}
 
 .card[data-card-type="2"]::before,
 .card[data-card-type="2"]::after {
@@ -808,7 +812,7 @@ li.clock::before {
 .game-chooser--Active::before {
     content: "▸";
     color: #fff;
-    font-size: 22px;
+    font-size: 60px;
     font-weight: bold;
     overflow: hidden;
     text-shadow: 2em 0.5em #f11717, -2em -0.5em #4296ff, -1.5em 0.5em #fff700, 1em 1em #b6fd25;

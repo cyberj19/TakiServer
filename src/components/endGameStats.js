@@ -21,13 +21,10 @@ class EndGameStats extends React.Component {
     getEndStats() {
         const {getPlayerScore, players, gameType} = this.props,
             isTournament = gameType === TOURNAMENS_GAME,
-            playersStats = players.map(({moves, type, name}, i) => ({
+            playersStats = players.map(({numTurns, type, name}, i) => ({
                 name,
-                oneCardTotal: moves.filter(({type : moveType, cards}) => moveType !== ACTION_INIT_PACK &&
-                    cards.filter(stats => stats.playerType === type)[0].cards.length === 1).length,
-                playerTotalMoves: moves.length - 1,
-                playerAverageTime: moves.length ? ((moves.filter(({type : moveType}) => moveType !== ACTION_INIT_PACK)
-                    .reduce(((acc, {duration})=> duration && (acc += duration)), 0)) / ((moves.length - 1) || 1)) / 1000 : 0,
+                oneCardTotal:0,
+                playerTotalMoves: numTurns,
                 playerType: type,
                 score: getPlayerScore && getPlayerScore(i)
             }));
@@ -48,10 +45,10 @@ class EndGameStats extends React.Component {
     }
 
     render() {
-        const {startTime, endTime, players, noCancel, gameType, children, tournamentEnd, okExit} = this.props,
-            gameTime = (endTime - startTime) / 1000,
+        const {startTime, players, noCancel, gameType, children, tournamentEnd, okExit} = this.props,
+            gameTime = (startTime) / 1000,
             isTournament = gameType === TOURNAMENS_GAME,
-            totalTurns = players.reduce((acc, {moves}) => (acc += moves.length - 1), 0);
+            totalTurns = players.reduce((acc, {moves}) => (acc += moves), 0);
 
         return <div>
             <strong>This game played {parseInt(gameTime / 60)} minutes and {parseInt(gameTime % 60)} seconds, during {totalTurns} moves</strong><br/>

@@ -48,11 +48,11 @@ class GameMenu extends React.Component {
     approveStatsModal() {
         const {players, endGameFn} = this.props,
                 {modalType} = this.state,
-                stats = players.map(({moves}) => moves)
+                stats = players.map(({numTurns}) => numTurns)
                     .reduce((pre, move) => pre = [...pre, ...move], [])
                     .sort((a ,b) => a.time > b.time ? 1 : -1);
 
-        endGameFn(stats, modalType === RESTART);
+        //endGameFn(stats, modalType === RESTART);
 
         this.setState({
             areYouSureOpen: false,
@@ -71,31 +71,31 @@ class GameMenu extends React.Component {
     }
 
     getStatsDialog() {
-        const {players, startTime, endTime} = this.props,
+        const {players, startTime} = this.props,
               {statsOpen, modalType} = this.state;
 
         return <Dialog key="statsDialog" isOpen={statsOpen} title={getText('youLost')}
                        noCancel
-                       description={<EndGameStats okExit={modalType === EXIT} noCancel {...{players, startTime, endTime}}/>}
+                       description={<EndGameStats okExit={modalType === EXIT} noCancel {...{players, startTime}}/>}
                        approveFunction={this.approveStatsModal}/>
     }
 
     render() {
-        const {players, startTime, endTime, gameNumber} = this.props,
-            turns = players.reduce((acc, player)=> (acc += player.moves.length - 1), 0);
+        const {players, startTime, gameNumber} = this.props,
+            turns = players.reduce((acc, player)=> (acc += player.numTurns), 0);
 
         return [
             this.getValidateDialog(),
             this.getStatsDialog(),
             <ul key="gameMenu" className="menu">
-                <li onClick={() => this.openModal(EXIT)} className="exit">
+                {/*<li onClick={() => this.openModal(EXIT)} className="exit">
                     Exit game
                 </li>
                 <li onClick={() => this.openModal(RESTART)} className="restart">
                     Restart
-                </li>
+                </li>*/}
                 <li className="clock">
-                    <Timer startTime={startTime} endTime={endTime}/>
+                    <Timer startTime={startTime}/>
                     <hr/>
                     {turns}
                 </li>

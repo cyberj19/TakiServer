@@ -47,7 +47,7 @@ class GameView extends React.Component {
     }
 
     nextMove() {
-        this.setState(prevState => {return {turn: (prevState.turn + 1) >= prevState.moves.length ? prevState.moves.length - 1 : prevState.turn + 1}});
+        this.setState(prevState => {return {turn: (prevState.turn + 1) >= prevState.moves ? prevState.moves - 1 : prevState.turn + 1}});
     }
     preMove() {
         this.setState(prevState => {return {turn: (prevState.turn - 1) < 0 ? 0 : (prevState.turn - 1)}});

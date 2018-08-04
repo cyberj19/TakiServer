@@ -25,8 +25,7 @@ class GameChooser extends React.Component {
         const {name, observers, players, required, state, created_by, player} = this.props;
 
         return (
-            <div 
-                 className={`game-chooser game-chooser--${state}`}>
+            <div className={`game-chooser game-chooser--${state}`}>
                 {name}
                 <div className="game-chooser__actions">
                     {player === created_by && <div onClick={this.deleteGame} className="game-chooser__actions__delete">X</div>}

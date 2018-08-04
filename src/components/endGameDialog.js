@@ -44,7 +44,7 @@ class EndGameDialog extends React.Component {
 
     render() {
         const {gameType, endGameFn, winner, players, startTime,
-                endTime, heap, tourScores, getPlayerScore, initGame} = this.props,
+                heap, tourScores, getPlayerScore, initGame} = this.props,
             tournamentEnd = tourScores && tourScores.length === 3,
             isRegular = gameType === REGULAR_GAME,
             winnerObj = players[winner];
