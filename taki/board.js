@@ -44,7 +44,7 @@ exports.Board = function(nplayers, dealer) {
         if (!initialized) return {initialized: false};
         return {
             initialized: true,
-            isDeckEmpty: dealer.isEmpty(),
+           // isDeckEmpty: dealer.isEmpty(),
             heap: [me.getTop()],
             direction: direction,
             activeTwo: take2Counter,
