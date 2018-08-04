@@ -133,8 +133,8 @@ exports.Game = function(gameName, creator, requiredPlayers) {
         };
     };
 
-    const playCard = function(player, card) {
-        let card = player.getCard(card);
+    const playCard = function(player, cardIndex) {
+        let card = player.getCard(cardIndex);
         if (!card) return {success: false, error: errors.MOVE_UNAVAILABLE};
 
         if (!board.isCardElligible(card)) return {success: false, error: errors.MOVE_ILLEGAL};
@@ -163,7 +163,7 @@ exports.Game = function(gameName, creator, requiredPlayers) {
         let player = players.find(p => p.name === params.player);
         if (!player) return {success:false, error: errors.PLAYER_UNKNOWN};
 
-        if (player.state === state.Pending || player.state === state.Finished) {
+        if (player.state === me.state.Pending || player.state === me.state.Finished) {
             return {success: false, error: errors.MOVE_PLAYER_NOT_PLAYING};
         }
 
