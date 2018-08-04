@@ -6,9 +6,14 @@ class GameChooser extends React.Component {
         super(props);
 
         this.joinGame = this.joinGame.bind(this);
-
+        this.deleteGame = this.deleteGame.bind(this);
     }
 
+    deleteGame() {
+        const {name, player} = this.props;
+
+        apiCall('deleteGame', {player:  player, game: name});
+    }
     joinGame() {
         const {name, player} = this.props;
 
@@ -24,7 +29,7 @@ class GameChooser extends React.Component {
                  className={`game-chooser game-chooser--${state}`}>
                 {name}
                 <div className="game-chooser__actions">
-                    {player === created_by && <div className="game-chooser__actions__delete">X</div>}
+                    {player === created_by && <div onClick={this.deleteGame} className="game-chooser__actions__delete">X</div>}
                     {state === 'Pending' && <div onClick={this.joinGame} className="game-chooser__actions__play">Join game</div>}
                     {state === 'Active' && <div className="game-chooser__actions__watch">Watch game</div>}
                 </div>
