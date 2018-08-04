@@ -172,7 +172,7 @@ exports.Taki = function () {
             error: errors.PLAYER_UNKNOWN
         };
 
-        const res = game.remove(params.player);
+        const res = game.removePlayer(params.player);
         if (!res.success) return res;
 
         player.state = playerStates.Idle;

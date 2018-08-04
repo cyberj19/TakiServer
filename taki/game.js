@@ -235,7 +235,7 @@ exports.Game = function(gameName, creator, requiredPlayers) {
 
     const removePlayerAtIndex = function(index) {
         let player = players[index];
-        if (player.state === gamePlayerStates.Finished || state === gameStates.Pending) {
+        if (player.state === gamePlayerStates.Finished || me.state === gameStates.Pending) {
             players.splice(index, 1);
             return {success: true};
         }
