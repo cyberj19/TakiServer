@@ -767,12 +767,12 @@ li.clock::before {
     box-shadow: inset 0 0 8px rgba(0,0,0,0.5);
 }
 
-.game-chooser::after {
-    content: attr(data-info);
+.game-chooser__actions {
     background: rgba(255,255,255,0.9);
     position: absolute;
     width: 100%;
     height: 100%;
+    text-align: center;
     opacity: 0;
     top: 0;
     left: 0;
@@ -780,7 +780,29 @@ li.clock::before {
     transition: opacity 0.3s;
 }
 
-.game-chooser:hover::after {
+
+.game-chooser__actions__watch,
+.game-chooser__actions__play {
+    display: inline-block;
+    padding: 20px;
+    background: #0087ff;
+    color: #FFF;
+}
+
+.game-chooser__actions__delete,
+.game-chooser__actions__watch,
+.game-chooser__actions__play {
+    cursor: pointer;
+}
+
+
+.game-chooser__actions__delete {
+    position: absolute;
+    right: 5px;
+    top: 5px;
+}
+
+.game-chooser:hover .game-chooser__actions {
     opacity: 1;
 }
 .game-chooser--Active::before {
@@ -799,6 +821,38 @@ li.clock::before {
     filter: progid:DXImageTransform.Microsoft.gradient( startColorstr='#f11717', endColorstr='#b6fd25',GradientType=1 );
 }
 
+.game-chooser__details {
+    position: absolute;
+    bottom: 0;
+    left: 0;
+    font-size: 14px;
+    color: #6f6f6f;
+    width: 100%;
+}
+
+.game-chooser__details__creator::before {
+    content: "creator: ";
+}
+.game-chooser__details__observers::after {
+    content: "\1f441";
+}
+.game-chooser__details__players::after {
+    content: "\265f";
+}
+
+.game-chooser__details__observers,
+.game-chooser__details__players {
+    float: right;
+}
+
+.game-chooser__details__creator {
+    float: left;
+}
+.game-chooser__details__creator,
+.game-chooser__details__observers,
+.game-chooser__details__players {
+    padding: 3px;
+}
 /*****************************/
 /*                           */
 /*      Players List         */

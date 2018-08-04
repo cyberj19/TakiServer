@@ -14,16 +14,22 @@ class GameChooser extends React.Component {
 
 
     render() {
-        const {name, observers, players, required, state} = this.props;
+        const {name, observers, players, required, state, created_by, player} = this.props;
 
         return (
             <div onClick={this.joinGame}
-                 data-name={name}
-                 data-observers={observers}
-                 data-players={players}
-                 data-required={required}
                  className={`game-chooser game-chooser--${state}`}>
                 {name}
+                <div className="game-chooser__actions">
+                    {player === created_by && <div className="game-chooser__actions__delete">X</div>}
+                    {state === 'Pending' && <div className="game-chooser__actions__play">Join game</div>}
+                    {state === 'Active' && <div className="game-chooser__actions__watch">Watch game</div>}
+                </div>
+                <div className="game-chooser__details">
+                    <span className="game-chooser__details__creator">{created_by}</span>
+                    <span className="game-chooser__details__players">{players}/{required} </span>
+                    <span className="game-chooser__details__observers">{observers} </span>
+                </div>
             </div>)
     }
 }
