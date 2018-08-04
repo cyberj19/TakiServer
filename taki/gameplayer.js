@@ -47,7 +47,7 @@ exports.GamePlayer = function(name,id,state) {
             avgTimePerTurn: me.avgTimePerTurn
         };        
     }
-    
+
     me.getSelfView = function(currentPlayerId) {
         let view = getView(currentPlayerId);
         return view;
@@ -87,10 +87,17 @@ exports.GamePlayer = function(name,id,state) {
     };
 
     me.getCard = function(card) {
-        console.log(card);
-        var index = getCardIndex(card);
-        if (index === -1) return undefined;
-        return card;
+        
+        if(cards[card.index].type === cardTypes.Color){
+           return {type:cardTypes.Color, color:card.color}
+        }
+        else{
+            return cards[card.index];
+        };
+        // console.log(card);
+        // var index = getCardIndex(card);
+        // if (index === -1) return undefined;
+        // return card;
     };
 
     me.addCards = function(newCards) {
@@ -98,7 +105,8 @@ exports.GamePlayer = function(name,id,state) {
     };
 
     me.removeCard = function(card) {
-        var index = getCardIndex(card);
-        if (index !== -1) cards.splice(index, 1);
+        cards.splice(card, 1);
+        // var index = getCardIndex(card);
+        // if (index !== -1) cards.splice(index, 1);
     };
 };
