@@ -751,7 +751,7 @@ li.clock::before {
     border-radius: 2px;
     font-size: 22px;
     padding: 5px;
-    cursor: pointer;
+    cursor: default;
     color: #736109;
     overflow: hidden;
 }
@@ -783,14 +783,15 @@ li.clock::before {
 .game-chooser:hover::after {
     opacity: 1;
 }
-.game-chooser--regular::before {
-    content: "T A K I";
+.game-chooser--Active::before {
+    content: "▸";
     color: #fff;
+    font-size: 22px;
     font-weight: bold;
     overflow: hidden;
     text-shadow: 2em 0.5em #f11717, -2em -0.5em #4296ff, -1.5em 0.5em #fff700, 1em 1em #b6fd25;
 }
-.game-chooser--tournament::before {
+.game-chooser--Pending::before {
     background: rgb(241,23,23);
     background: -moz-linear-gradient(-45deg, rgba(241,23,23,1) 0%, rgba(255,247,0,1) 33%, rgba(66,150,255,1) 68%, rgba(182,253,37,1) 100%);
     background: -webkit-linear-gradient(-45deg, rgba(241,23,23,1) 0%,rgba(255,247,0,1) 33%,rgba(66,150,255,1) 68%,rgba(182,253,37,1) 100%);

@@ -55,7 +55,7 @@ class GameManager extends React.Component {
             window.clearInterval(this.state.pullingInterval);
         }
         if (!oldState.loggedIn && this.state.loggedIn) {
-            this.setState({pullingInterval: window.setInterval(this.getViews, 250)});
+            this.setState({pullingInterval: window.setInterval(this.getViews, 700)});
         }
 
     }
