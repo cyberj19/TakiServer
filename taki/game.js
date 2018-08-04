@@ -195,7 +195,7 @@ exports.Game = function(params) {
     }
 
     this.add = function(params) {
-        if (state !== gameStates.Pending) return {success: false, error: errors.GAME_ALREADY_STARTED};
+        if (this.state !== gameStates.Pending) return {success: false, error: errors.GAME_ALREADY_STARTED};
         if (isPlayerInGame(params.player)) return {success: false, error: errors.GAME_PLAYER_ALREADY_IN_GAME};
 
         if (params.asObserver) {
