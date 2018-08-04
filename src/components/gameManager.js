@@ -9,11 +9,7 @@ import GameChooser from "./gameChooser";
 import {
     PLAYER_TYPE,
     COMPUTER_TYPE,
-    REGULAR_GAME,
-    TOURNAMENS_GAME
 } from '../helpers/constants'
-
-const gameTypes = [REGULAR_GAME, TOURNAMENS_GAME];
 
 class GameManager extends React.Component {
     constructor(props) {
