@@ -1,33 +1,29 @@
 const Game = require('./game.js');
-const errors = require('./consts.js').errors;
-const gameStates = require('./consts.js').gameStates;
+
+const consts = require('./consts.js');
+const errors = consts.errors;
+const gameStates = consts.gameStates;
+const playerStates = consts.playerStates;
 
 exports.Taki = function () {
-
-    // TODO: move to consts file
-    const playerStates = {
-        Idle: 'Idle',
-        InGame: 'InGame'
-    };
-
     let players = [];
     let games = [];
 
-    this.registerPlayer = function (params) {
-        if (params.name === '')
+    this.registerPlayer = function (player) {
+        if (player === '')
             return {
                 success: false,
                 error: errors.PLAYER_ILLEGAL_NAME
             };
 
-        const index = players.findIndex(player => player.name === params.name);
+        const index = players.findIndex(p => p.name === player);
         if (index !== -1) return {
             success: false,
             error: errors.PLAYER_NAME_EXISTS
         };
 
         const newPlayer = {
-            name: params.name,
+            name: player,
             state: playerStates.Idle,
             currentGame: null
         };
@@ -38,22 +34,18 @@ exports.Taki = function () {
         };
     };
 
-    this.removePlayer = function (params) {
-        let index = players.findIndex(player => player.name === params.name);
-        if (index === -1) return {
-            success: true
-        };
+    this.removePlayer = function (player) {
+        let index = players.findIndex(p => p.name === player);
+        if (index === -1) return {success: true};
 
         players.splice(index, 1);
 
         for (let game of games) {
-            if (game.removePlayer(params.name))
+            if (game.removePlayer(player))
                 break;
         }
 
-        return {
-            success: true
-        };
+        return {success: true};
     };
 
 

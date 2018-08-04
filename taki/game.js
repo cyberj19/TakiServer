@@ -2,7 +2,7 @@ const consts = require('./consts.js');
 const errors = consts.errors;
 const moveTypes = consts.moveTypes;
 const gameStates = consts.gameStates;
-const playerStates = consts.playerStates;
+const gamePlayerStates = consts.gamePlayerStates;
 
 const Board = require('./board.js');
 const GamePlayer = require('./gameplayer.js').GamePlayer;
@@ -48,7 +48,7 @@ exports.Game = function(gameName, creator, requiredPlayers) {
         board.initialize(players.map(p => p.id));
         for (let player of players) {
             player.addCards(board.dealCard(8));
-            player.state = playerStates.Playing;
+            player.state = gamePlayerStates.Playing;
         }
         activePlayers = players.length;
         round++;
@@ -184,23 +184,37 @@ exports.Game = function(gameName, creator, requiredPlayers) {
             result = takeCard(player);
         else 
             return {success: false, error: errors.MOVE_UNAVAILABLE}
-        player.numTurns++;
-        if (!result.success) return result;        
         
-        if (!player.hasCards()) {
-            playerWin(player); 
-            if (activePlayers === 1) { 
-                playerWin(players.find(p=>p.state !== playerStates.Finished));
-                state = gameState.Finishing;
-            }   
-        } 
+
+        if (!result.success) return result;
+
+        player.endTurn();
+        triggerNextPlayer();
+        handleWinner(player);
         
         return result;
     };
 
+    const handleWinner = function(player) {
+        if (!player.hasCards()) {
+            playerWin(player); 
+            if (activePlayers === 1) { 
+                playerWin(players.find(p=>p.state !== gamePlayerStates.Finished));
+                me.state = gameState.Finishing;
+            }   
+        } 
+    }
+    const triggerNextPlayer = function() {
+        for (let player of players) {
+            if (player.id === board.getCurrentPlayerId()) {
+                player.startTurn();
+                break;
+            }
+        }
+    }
     const playerWin = function(winner) {
         board.removeWinner(winner.id);
-        winner.state = playerStates.Finished;
+        winner.state = gamePlayerStates.Finished;
         winners.push(winner.name);
         winner.setWinner(winners.length);
         activePlayers--;
@@ -215,7 +229,7 @@ exports.Game = function(gameName, creator, requiredPlayers) {
             return {success: true};
         }
 
-        let gamePlayer = new GamePlayer(player, playersCount++, playerStates.Pending);
+        let gamePlayer = new GamePlayer(player, playersCount++, gamePlayerStates.Pending);
         players.push(gamePlayer);
         if (players.length === requiredPlayers) {
             start();
@@ -225,7 +239,7 @@ exports.Game = function(gameName, creator, requiredPlayers) {
 
     const removePlayerAtIndex = function(index) {
         let player = players[index];
-        if (player.state === playerStates.Finished || state === gameStates.Pending) {
+        if (player.state === gamePlayerStates.Finished || state === gameStates.Pending) {
             players.splice(index, 1);
             return {success: true};
         }

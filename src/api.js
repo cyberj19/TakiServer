@@ -135,10 +135,10 @@ exports.APIServer = function(params, taki) {
     });
 
     app.post('/api/login', function(request, response, next) {
-        const name = request.body.player;
+        const player = request.body.player;
 
-        console.info('New login request from ' + name);
-        const res = taki.registerPlayer({name: name});
+        console.info('New login request from ' + player);
+        const res = taki.registerPlayer(player);
 
         if (!res.success) {
             response.status(400).send(res);
@@ -152,8 +152,9 @@ exports.APIServer = function(params, taki) {
 
 
     app.post('/api/logout', function(request, response, next) {
-        console.info('Logout request from ' + request.body.player);
-        taki.removePlayer({name: request.body.player});
+        const player  = request.body.player;
+        console.info('Logout request from ' + player);
+        taki.removePlayer(player);
         //delete request.player;
         response.status(200).send({success:true});
     });

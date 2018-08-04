@@ -60,8 +60,13 @@ exports.gameStates = {
     Finishing: "Finishing"
 };
 
-exports.playerStates = {
+exports.gamePlayerStates = {
     Pending: 0,
     Playing: 1,
     Finished: 2
+};
+
+exports.playerStates = {
+    Idle: 'Idle',
+    InGame: 'InGame'
 };

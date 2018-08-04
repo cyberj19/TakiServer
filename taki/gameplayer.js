@@ -10,8 +10,22 @@ exports.GamePlayer = function(name,id,state) {
     this.id = id;
     this.numTurns = 0;
     this.totalTime = 0;
+    this.avgTimePerTurn = 0;
+
+    let turnStartTime = 0;
     let win = -1;
 
+    this.startTurn = function() {
+        turnStartTime = Math.floor(Date.now()/1000);
+    }
+
+    this.endTurn = function() {
+        this.numTurns++;
+        let cts = Math.floor(Date.now()/1000);
+        this.totalTime += cts-turnStartTime;
+        this.avgTimePerTurn = this.totalTime*1.0/this.numTurns;
+
+    }
     this.setWin = function(win) {
         this.win = win;
     }
@@ -19,7 +33,7 @@ exports.GamePlayer = function(name,id,state) {
         return cards.some(c=>cardsModule.isElligible(c,currentCard));
     };
 
-    this.getSelfView = function(currentPlayerId) {
+    const getView = function(currentPlayerId) {
         return {
             name: this.name,
             cards: cards,
@@ -27,28 +41,28 @@ exports.GamePlayer = function(name,id,state) {
             id: this.id,
             turn: this.id === currentPlayerId,
             win: win,
-            numTurns: this.numTurns
-        };
+            numTurns: this.numTurns,
+            avgTimePerTurn: this.avgTimePerTurn
+        };        
+    }
+    this.getSelfView = function(currentPlayerId) {
+        return getView();
     };
 
     this.getOpponentView = function(currentPlayerId) {
-        return {
-            name: this.name,
-            cards: cards.map(c => {}),
-            type: this.type,
-            id: this.id,
-            turn: this.id === currentPlayerId,
-            win: win,
-            numTurns: this.numTurns
-        };
+        let view = getView();
+        view.cards = cards.map(c=>{
+            return {};
+        });
+        return view;
     };
 
     this.getSummaryView = function() {
         return {
             name: this.name,
-            turns_with_one_card: 1,
-            num_turns: this.numTurns,
-            avg_time_per_turn: this.totalTime*1.0/this.numTurns,
+            turnsWithOneCard: 1,
+            numTurns: this.numTurns,
+            avgTimePerTurn: this.avgTimePerTurn,
             win: win
         }
     };
