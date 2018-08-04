@@ -9,29 +9,21 @@ exports.Taki = function () {
     let players = [];
     let games = [];
 
-    this.registerPlayer = function (player) {
-        if (player === '')
-            return {
-                success: false,
-                error: errors.PLAYER_ILLEGAL_NAME
-            };
+    this.registerPlayer = function (player, callback) {
+        if (player === '') return callback(errors.PLAYER_ILLEGAL_NAME);
 
         const index = players.findIndex(p => p.name === player);
-        if (index !== -1) return {
-            success: false,
-            error: errors.PLAYER_NAME_EXISTS
-        };
+        if (index !== -1) return callback(errors.PLAYER_NAME_EXISTS);
 
         const newPlayer = {
             name: player,
             state: playerStates.Idle,
-            currentGame: null
+            currentGame: null,
+            lastKeepAlive: Date.now()
         };
 
         players.push(newPlayer);
-        return {
-            success: true
-        };
+        callback();
     };
 
     this.removePlayer = function (player) {
@@ -49,23 +41,17 @@ exports.Taki = function () {
     };
 
 
-    this.removeGame = function (gameToRemove, creatorName) {
+    this.removeGame = function (gameToRemove, creatorName, callback) {
         let index = games.findIndex(game => game.name === gameToRemove);
-        if (index === -1) return {success: true};
+        if (index === -1) return callback();
+
         let game = games[index];
 
         if (game.createdBy !== creatorName) 
-            return {
-                success: false,
-                error: errors.GAME_MUST_BE_REMOVED_ONLY_BY_CREATOR
-            };
+            return callback(errors.GAME_MUST_BE_REMOVED_ONLY_BY_CREATOR);
         
         if (game.state !== gameStates.Pending) 
-            return {
-                success: false,
-                error: errors.GAME_CANNOT_REMOVE_WHEN_NOT_PENDING
-            };
-
+            return callback(errors.GAME_CANNOT_REMOVE_WHEN_NOT_PENDING);
 
         for (let player of players) {
             if (player.currentGame === gameToRemove) {
@@ -74,7 +60,7 @@ exports.Taki = function () {
             }
         }
         games.splice(index, 1);
-        return {success: true};
+        return callback();
     }
 
 

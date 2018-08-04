@@ -108,14 +108,15 @@ exports.APIServer = function(params, taki) {
         const creator=request.body.player;
         const res = taki.removeGame(game,creator);
 
-        if (!res.success) {
-            response.status(400).send(res);
-            console.warn('Remove game failed. Error code ' + res.error);
-        } else {
-            //request.session.player = {name: name};
-            console.info('Game removed successfuly');
-            response.status(200).send(res);
-        }
+        taki.removeGame(game,creator, err => {
+            if (err) {
+                console.warn('Remove game failed. Error code ' + err);
+                response.status(400).send({success:false,error:err});
+            } else {
+                console.info('Game removed successfuly');
+                response.status(200).send({success:true});
+            }
+        });
     });
     app.post('/api/game/create', function(request, response, next) {
         console.info('New game create request');
@@ -136,18 +137,16 @@ exports.APIServer = function(params, taki) {
 
     app.post('/api/login', function(request, response, next) {
         const player = request.body.player;
-
         console.info('New login request from ' + player);
-        const res = taki.registerPlayer(player);
-
-        if (!res.success) {
-            response.status(400).send(res);
-            console.warn('Login failed. Error code ' + res.error);
-        } else {
-            //request.session.player = {name: name};
-            console.info('Login successful');
-            response.status(200).send(res);
-        }
+        taki.registerPlayer(player, (err) => {
+            if (err) {
+                console.warn('Login failed. Error code: ' + err);
+                response.status(400).send({success:false, error: err});
+            } else {
+                console.info('Login successful ' + player);
+                response.status(200).send({success:true});
+            }
+        });
     });
 
 

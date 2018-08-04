@@ -44,16 +44,11 @@ exports.Board = function(nplayers, dealer) {
         if (!initialized) return {initialized: false};
         return {
             initialized: true,
-            deck_empty: dealer.isEmpty(),
-            stack_top: me.getTop(),
-            turn: {
-                currentPlayerId: activePlayersIds[currentTurn],
-                direction: direction
-            },
-            special_modes: {
-                take2: take2Counter,
-                taki: takiMode
-            }
+            isDeckEmpty: dealer.isEmpty(),
+            heap: [me.getTop()],
+            direction: direction,
+            activeTwo: take2Counter,
+            isTaki: takiMode
         };
     };
 

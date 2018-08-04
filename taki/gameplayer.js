@@ -26,8 +26,8 @@ exports.GamePlayer = function(name,id,state) {
         let cts = Math.floor(Date.now()/1000);
         me.totalTime += cts-turnStartTime;
         me.avgTimePerTurn = me.totalTime*1.0/me.numTurns;
-
     }
+
     me.setWin = function(win) {
         me.win = win;
     }
@@ -47,6 +47,7 @@ exports.GamePlayer = function(name,id,state) {
             avgTimePerTurn: me.avgTimePerTurn
         };        
     }
+    
     me.getSelfView = function(currentPlayerId) {
         let view = getView(currentPlayerId);
         return view;
