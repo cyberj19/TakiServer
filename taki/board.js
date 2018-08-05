@@ -5,14 +5,14 @@ const cardColors = consts.cardColors;
 const cards = require('./cards.js');
 const random = require('../utils/random.js');
 
-exports.GetTakiBoard = function(nplayers) {
+exports.GetTakiBoard = function (nplayers) {
     const DelearModule = require('./dealer.js');
     let deck = DelearModule.defaultDeck();
-    let delear = new DelearModule.Delear(deck,'random');
+    let delear = new DelearModule.Delear(deck, 'random');
     return new exports.Board(nplayers, delear);
 }
 
-exports.Board = function(nplayers, dealer) {
+exports.Board = function (nplayers, dealer) {
     let me = this;
 
     let initialized = false;
@@ -26,23 +26,25 @@ exports.Board = function(nplayers, dealer) {
     let activePlayersIds = [];
     let take2Mode = false;
 
-    me.getTop = function() {
+    me.getTop = function () {
         return stack[stack.length - 1];
-    }; 
+    };
 
-    me.removeWinner = function(winnerId) {
+    me.removeWinner = function (winnerId) {
         let currentPlayerId = me.getCurrentPlayerId();
         let index = activePlayersIds.indexOf(winnerId);
-        activePlayersIds.splice(index,1);
+        activePlayersIds.splice(index, 1);
         currentTurn = activePlayersIds.indexOf(currentPlayerId);
     };
 
-    me.getCurrentPlayerId = function() {
+    me.getCurrentPlayerId = function () {
         return activePlayersIds[currentTurn];
     };
 
-    me.getView = function() {
-        if (!initialized) return {initialized: false};
+    me.getView = function () {
+        if (!initialized) return {
+            initialized: false
+        };
         return {
             initialized: true,
             // isDeckEmpty: dealer.isEmpty(),
@@ -54,20 +56,20 @@ exports.Board = function(nplayers, dealer) {
         };
     };
 
-    me.initialize = function(playerIds) {
+    me.initialize = function (playerIds) {
         stack.push(dealer.getFirstCard());
         activePlayersIds = playerIds;
         currentTurn = 0;
         initialized = true;
     };
 
-    const resetDelear = function() {
+    const resetDelear = function () {
         temp = stack.pop();
         dealer.returnCards(stack);
         stack = [temp];
     };
 
-    const getCards = function(n) {
+    const getCards = function (n) {
         var newCards = [];
         for (let i = 0; i < n; i++) {
             if (dealer.isEmpty()) resetDelear();
@@ -75,16 +77,20 @@ exports.Board = function(nplayers, dealer) {
         }
         return newCards;
     }
-    me.isTakiMode = function() {return takiMode;}
-    me.isTake2Mode = function() {return take2Mode;}
+    me.isTakiMode = function () {
+        return takiMode;
+    }
+    me.isTake2Mode = function () {
+        return take2Mode;
+    }
 
-    const endTake2 = function(){
+    const endTake2 = function () {
         take2Counter = 0;
         take2Mode = false;
         lastPlayedCard = null;
     };
 
-    me.dealCard = function(n) {
+    me.dealCard = function (n) {
         var cardsToDraw = 1;
         if (n) {
             cardsToDraw = n;
@@ -94,36 +100,39 @@ exports.Board = function(nplayers, dealer) {
         return getCards(cardsToDraw);
     };
 
-    me.isCardEligible = function(card) {
+    me.isCardEligible = function (card) {
         // if(take2Mode && card.type !== cardTypes.Take2){ return false; }
         // if(card.type === cardTypes.SuperTaki && card.color === cardColors.None){ return true;}
         return cards.isEligible(card, me.getTop(), take2Mode);
     };
 
-    me.takeCard = function() {
+    me.takeCard = function () {
         let cards = me.dealCard();
         endTake2();
         endTurn();
         return cards;
     }
 
-    me.placeCard = function(card) {
-        if(card.type !== cardTypes.Taki || card.color !== cardColors.None){
-            if(card.type === cardTypes.Take2){
-                take2Mode = true;
+    me.placeCard = function (card) {
+        if (!card.wasSuperTaki) {
+            if (cards.isTaki(lastPlayedCard)) {
+                takiMode = true;
             }
             stack.push(card);
             lastPlayedCard = card;
-        }
-        else{
-            let newcard ={type: card.type, color: me.getTop().color};
+        } else {
+            let newcard = {
+                type: card.type,
+                color: me.getTop().color,
+                wasSuperTaki: true
+            };
             stack.push(newcard);
             lastPlayedCard = card;
         }
         endTurn();
     };
 
-    me.endTaki = function() {
+    me.endTaki = function () {
         takiMode = false;
         lastPlayedCard = null;
         endTurn();
@@ -134,32 +143,27 @@ exports.Board = function(nplayers, dealer) {
         take2Counter = 0;
     };*/
 
-    const advanceTurn = function() {
+    const advanceTurn = function () {
         currentTurn += direction;
-        currentTurn = (currentTurn + activePlayersIds.length) % activePlayersIds.length; 
+        currentTurn = (currentTurn + activePlayersIds.length) % activePlayersIds.length;
     };
 
-    const endTurn = function() {
+    const endTurn = function () {
         // if (!lastPlayedCard)
         //     return advanceTurn();
-        if (cards.isTaki(lastPlayedCard)) {
-            takiMode = true;
-        }
-        else if (cards.isTake2(lastPlayedCard)) {
+        if (cards.isTake2(lastPlayedCard)) {
             take2Mode = true;
         }
-        if (lastPlayedCard){
+        if (lastPlayedCard) {
             if (lastPlayedCard.type === cardTypes.ChangeDirection) {
                 direction *= -1;
-            }      
-            else if (lastPlayedCard.type !== cardTypes.Plus && !takiMode) {
+            } else if (lastPlayedCard.type !== cardTypes.Plus && !takiMode) {
                 if (lastPlayedCard.type === cardTypes.Stop) currentTurn += direction;
-                if (lastPlayedCard.type === cardTypes.Take2) take2Counter += 2; 
-            }
-        }
-        if (lastPlayedCard && lastPlayedCard.type === cardTypes.Plus || takiMode) return;
+                if (lastPlayedCard.type === cardTypes.Take2) take2Counter += 2;
+            } else return;
+        } else if (takiMode) return;
 
         console.log("advance turn");
-        advanceTurn();  
+        advanceTurn();
     };
 };

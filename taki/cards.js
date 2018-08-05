@@ -7,7 +7,7 @@ exports.isEligible = function(newCard, currentCard, take2mode) {
     
     if (newCard.type === cardTypes.Color) 
         return true;
-
+    if (newCard.wasSuperTaki) return true;
     console.log('Card is of concrete type');
     if (currentCard.color === newCard.color) return true;
     console.log('Colors dont match');

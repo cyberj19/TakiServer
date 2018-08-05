@@ -49,6 +49,8 @@ exports.Game = function(gameName, creator, requiredPlayers) {
         for (let player of players) {
             player.addCards(board.dealCard(8));
             player.state = gamePlayerStates.Playing;
+            if (player.id === board.getCurrentPlayerId())
+                player.startTurn();
         }
         activePlayers = players.length;
         round++;

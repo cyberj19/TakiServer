@@ -64,13 +64,9 @@ exports.Delear = function (initCards, type) {
 
     this.getFirstCard = function () {
         let card = this.getCard();
-        if (card.type === cardTypes.SuperTaki ||
-            card.type === cardTypes.Color) {
-            if (type === 'deterministic') card.color = 'yellow';
-            else {
-                let color = random.randomKey(cardColors);
-                card.color = cardColors[color];
-            }
+        while (card.wasSuperTaki || card.type === cardTypes.Color) {
+            this.returnCards([card]);
+            card = this.getCard();
         }
         return card;
     };
