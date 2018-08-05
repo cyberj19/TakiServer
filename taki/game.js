@@ -147,7 +147,7 @@ exports.Game = function(gameName, creator, requiredPlayers) {
     const takeCard = function(player) {
         if (player.hasElligibleCards(board.getTop())) 
             return {success: false, error: errors.MOVE_ELLIGIBLE_CARDS};
-
+        board.endTake2();
         player.addCards(board.takeCard());
         return {success: true};
     };
@@ -159,7 +159,7 @@ exports.Game = function(gameName, creator, requiredPlayers) {
     };
 
     me.move = function(params) {
-        console.log('game.playerMove: ' + params);
+        console.log('game.playerMove: '+params.move+ ', player:' + params.player +', card: ' +params.card);
         let player = players.find(p => p.name === params.player);
         if (!player) return {success:false, error: errors.PLAYER_UNKNOWN};
 
@@ -196,7 +196,7 @@ exports.Game = function(gameName, creator, requiredPlayers) {
             playerWin(player); 
             if (activePlayers === 1) { 
                 playerWin(players.find(p=>p.state !== gamePlayerStates.Finished));
-                me.state = gameState.Finishing;
+                me.state = gameStates.Finishing;
             }   
         } 
     }
