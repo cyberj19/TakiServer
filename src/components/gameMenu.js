@@ -1,11 +1,8 @@
 import React from "react";
 import Timer from './timer';
-import EndGameStats from './endGameStats';
 import {getText} from "../modules/texts.mjs";
 import Dialog from "./dialog";
 
-const RESTART = 'restart';
-const EXIT = 'exit';
 
 class GameMenu extends React.Component {
     constructor(props) {
@@ -19,7 +16,6 @@ class GameMenu extends React.Component {
 
         this.openModal = this.openModal.bind(this);
         this.cancelModal = this.cancelModal.bind(this);
-        this.getStatsDialog = this.getStatsDialog.bind(this);
         this.getValidateDialog = this.getValidateDialog.bind(this);
         this.approveStatsModal = this.approveStatsModal.bind(this);
         this.approveValidateModal = this.approveValidateModal.bind(this);
@@ -70,28 +66,18 @@ class GameMenu extends React.Component {
                        approveFunction={this.approveValidateModal}/>
     }
 
-    getStatsDialog() {
-        const {players, startTime} = this.props,
-              {statsOpen, modalType} = this.state;
-
-        return <Dialog key="statsDialog" isOpen={statsOpen} title={getText('youLost')}
-                       noCancel
-                       description={<EndGameStats okExit={modalType === EXIT} noCancel {...{players, startTime}}/>}
-                       approveFunction={this.approveStatsModal}/>
-    }
 
     render() {
-        const {players, startTime, gameNumber} = this.props,
+        const {players, startTime, gameNumber, endGameFn} = this.props,
             turns = players.reduce((acc, player)=> (acc += player.numTurns), 0);
 
         return [
             this.getValidateDialog(),
-            this.getStatsDialog(),
             <ul key="gameMenu" className="menu">
-                {/*<li onClick={() => this.openModal(EXIT)} className="exit">
+                {endGameFn && <li onClick={endGameFn} className="exit">
                     Exit game
-                </li>
-                <li onClick={() => this.openModal(RESTART)} className="restart">
+                </li>}
+                {/*<li onClick={() => this.openModal(RESTART)} className="restart">
                     Restart
                 </li>*/}
                 <li className="clock">

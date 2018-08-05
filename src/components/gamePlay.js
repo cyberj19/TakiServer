@@ -230,13 +230,10 @@ class GamePlay extends React.Component {
     }
 
     getWinnerRender() {
-        const {gameType, endGameFn, gameObj} = this.props,
+        const {gameType, gameObj} = this.props,
             {winners, players, heap, state} = gameObj;
 
-        return state === 'Finish' && <EndGameDialog {...{gameType, endGameFn, winners, players,
-                            heap,
-                            initGame: ()=>{}
-            }}/>
+        return state === 'Finish' && ''
     }
 
     getPlayerScore(player) {
@@ -245,39 +242,47 @@ class GamePlay extends React.Component {
     }
 
     render() {
-        const {endGameFn, gameType, gameObj, playerName} = this.props,
+        const {gameType, gameObj, playerName} = this.props,
             {cantPullModal, startTime} = this.state,
-            {players, heap, winner, tourScores, activeTwo,
-                isTaki, state} = gameObj;
+            {players, heap, winner, winners, tourScores, activeTwo,
+                isTaki, state} = gameObj,
+            _winners = winner || winners || [];
+
 
         if (state !== 'Pending') {
-            const topCard = heap[heap.length - 1],
-                player = this.getPlayer(),
-                deckProps = i => ({
-                    gameType,
-                    score: this.getPlayerScore(i),
-                    chooseCard: this.chooseCard,
-                    gameEnd: winner !== null,
-                    isCardEligible: this.isCardEligible,
-                    heapCard: topCard,
-                    pullCard: this.pullFromStack,
-                    endTaki: player.turn && isTaki && this.endTaki
-                });
+            if ( _winners.length !== players.length) {
+                const topCard = heap[heap.length - 1],
+                    player = this.getPlayer(),
+                    isFinish = _winners.indexOf(playerName) > -1,
+                    deckProps = i => ({
+                        gameType,
+                        winner: _winners,
+                        score: this.getPlayerScore(i),
+                        chooseCard: this.chooseCard,
+                        isCardEligible: this.isCardEligible,
+                        heapCard: topCard,
+                        pullCard: this.pullFromStack,
+                        endTaki: player.turn && isTaki && this.endTaki
+                    });
 
-            return (<div className="board">
-                <GameMenu players={players} startTime={startTime} setEndTime={this.setEndTime}
-                          endGameFn={endGameFn} gameNumber={tourScores ? tourScores.length + 1 : null}/>
-                {this.getWinnerRender()}
-                <Dialog approveFunction={this.closePullCardModal} title={getText('CantPullTitle')}
-                        description={getText('CantPullDesc' + (!player.turn ? 'NotPlayer' : (isTaki ? 'Taki' : '')))}
-                        isOpen={cantPullModal} noCancel/>
-                {players.map((player, i) => <Deck key={i} {...player} {...deckProps(i)} type={player.name === playerName ? PLAYER_TYPE : OPP_TYPE}/>)}
-                <div onClick={(player.turn && !isTaki) ? this.pullFromStack : this.cantPullCard} className="pack stack">
-                    {!!activeTwo && <span className="two-badge">{activeTwo}</span>}
-                    <div className={`card active ${player.turn && (this.playerHasEligibleCard() ? '' : 'required')}`}/>
-                </div>
-                <Heap heap={heap}/>
-            </div>);
+                return (<div className="board">
+                    <GameMenu players={players} startTime={startTime} setEndTime={this.setEndTime}
+                              endGameFn={isFinish ? this.leaveGame : null} gameNumber={tourScores ? tourScores.length + 1 : null}/>
+                    <Dialog approveFunction={this.closePullCardModal} title={getText('CantPullTitle')}
+                            description={getText('CantPullDesc' + (!player.turn ? 'NotPlayer' : (isTaki ? 'Taki' : '')))}
+                            isOpen={cantPullModal} noCancel/>
+                    {players.map((player, i) => <Deck key={i} {...player} {...deckProps(i)}
+                                                      type={player.name === playerName ? PLAYER_TYPE : OPP_TYPE}/>)}
+                    <div onClick={(player.turn && !isTaki) ? this.pullFromStack : this.cantPullCard}
+                         className="pack stack">
+                        {!!activeTwo && <span className="two-badge">{activeTwo}</span>}
+                        <div
+                            className={`card active ${player.turn && (this.playerHasEligibleCard() ? '' : 'required')}`}/>
+                    </div>
+                    <Heap heap={heap}/>
+                </div>);
+            }
+            else return  <EndGameDialog players={players} winner={_winners} exitGame={this.leaveGame}/>;
         }
         return <div>Game is pending, <br/> <br/> Until it start you can <span onClick={this.leaveGame} className="leave-game-btn">Leave it</span></div>
     }
