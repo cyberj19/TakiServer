@@ -424,6 +424,16 @@ li.clock::before {
     box-shadow:  0 0 0 0 red, 3px 3px 13px rgba(0,0,0,0.3);
     color: #0f2107;
 }
+.deck-stats__winner {
+    position: absolute;
+    top: 12px;
+    left: 12px;
+    color: #ff0;
+    text-shadow: 1px 1px 2px rgba(0,0,0,0.3);
+}
+.deck-stats__winner::before {
+    content: "\265b: ";
+}
 .player .deck-stats {
 
     top: auto;
@@ -745,6 +755,22 @@ li.clock::before {
 .player-stats:not(.stats) li {
     font-weight: bold;
 }
+.player-stats:not(.stats) {
+    position: relative;
+}
+.player-stats:not(.stats)::after {
+    content: attr(data-place);
+    position: absolute;
+    left: 0;
+    top: -8px;
+    background: green;
+    width: 20px;
+    color: white;
+    line-height: 20px;
+    height: 20px;
+    text-align: center;
+    border-radius: 50%;
+}
 .player-stats.stats li:first-child {
     visibility: hidden;
 }
@@ -824,6 +850,14 @@ li.clock::before {
     font-weight: bold;
     overflow: hidden;
     text-shadow: 2em 0.5em #f11717, -2em -0.5em #4296ff, -1.5em 0.5em #fff700, 1em 1em #b6fd25;
+}
+.game-chooser--Finishing::before {
+    content: "Game End";
+    color: #fff;
+    font-size: 60px;
+    font-weight: bold;
+    overflow: hidden;
+    text-shadow: .1em 0.1em #f11717, -.1em -0.1em #4296ff, -0.1em 0.1em #fff700, .1em .1em #b6fd25;
 }
 .game-chooser--Pending::before {
     background: rgb(241,23,23);

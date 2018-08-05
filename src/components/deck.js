@@ -69,8 +69,10 @@ class Deck extends React.Component {
     render() {
         const {
                 name, type, numTurns, turn, chooseCard, isCardEligible,
-                endTaki, gameEnd, viewMode, avgTimePerTurn
+                endTaki, winner, viewMode, avgTimePerTurn
             } = this.props,
+            winIndex = winner.indexOf(name),
+            gameEnd = winIndex  > -1,
             {colorModalOpen, chosenCardIndex, chosenColor, cards} = this.state,
             isPlayer = type === PLAYER_TYPE;
 
@@ -82,6 +84,7 @@ class Deck extends React.Component {
                                        isOpen={colorModalOpen}
                                 />}
             <div className="deck-stats">
+                {gameEnd && <span className="deck-stats__winner">{winIndex + 1}</span>}
                 <h2>{name || type}</h2>
                 {numTurns && <h3>{getText('totalMoves')} {numTurns}</h3>}
                 {avgTimePerTurn ? <h3>{getText('avgMoves')} {toTimeString(avgTimePerTurn)}</h3> : null}

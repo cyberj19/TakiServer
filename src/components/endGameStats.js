@@ -10,53 +10,48 @@ class EndGameStats extends React.Component {
     constructor(props) {
         super(props);
 
-        this.state = {
-            areYouSureOpen: false,
-            statsOpen: false,
-            modalType: null,
-        };
         this.getEndStats = this.getEndStats.bind(this);
     }
 
     getEndStats() {
-        const {getPlayerScore, players, gameType} = this.props,
-            isTournament = gameType === TOURNAMENS_GAME,
-            playersStats = players.map(({numTurns, type, name}, i) => ({
+        const {players, winner} = this.props;
+
+        let __playersStats = {};
+        players.forEach(({numTurns, name, avgTimePerTurn, turnsWithOneCard}) => {
+            __playersStats[name] = {
                 name,
-                oneCardTotal:0,
+                playerAverageTime: avgTimePerTurn,
+                oneCardTotal: turnsWithOneCard,
                 playerTotalMoves: numTurns,
-                playerType: type,
-                score: getPlayerScore && getPlayerScore(i)
-            }));
+                playerType: 'player'
+            }
+        });
+        const playersStats = winner.map(key => ({...__playersStats[key]}));
         return [{
             playerType: 'stats',
             name: 'stats',
             oneCardTotal: getText('oneCardTotal'),
             playerAverageTime: getText('playerAverageTime'),
-            playerTotalMoves: getText('playerTotalMoves'),
-            score: getText('tourScoreTotal')
-        }, ...playersStats].map(({playerType, name, oneCardTotal, playerAverageTime, playerTotalMoves, score}, i) => (<ul key={i + name} className={`player-stats ${playerType}`}>
-            <li>{name}</li>
-            <li>{oneCardTotal}</li>
-            <li>{typeof playerAverageTime === 'string' ? playerAverageTime : toTimeString(playerAverageTime)}</li>
-            <li>{playerTotalMoves}</li>
-            {isTournament && <li>{score}</li>}
-        </ul>));
+            playerTotalMoves: getText('playerTotalMoves')
+        }, ...playersStats].map(({playerType, name, oneCardTotal, playerAverageTime, playerTotalMoves}, i) => (
+            <ul data-place={i} key={i + name} className={`player-stats ${playerType}`}>
+                <li>{name}</li>
+                <li>{oneCardTotal}</li>
+                <li>{typeof playerAverageTime === 'string' ? playerAverageTime : toTimeString(playerAverageTime)}</li>
+                <li>{playerTotalMoves}</li>
+            </ul>));
     }
 
     render() {
-        const {startTime, players, noCancel, gameType, children, tournamentEnd, okExit} = this.props,
-            gameTime = (startTime) / 1000,
-            isTournament = gameType === TOURNAMENS_GAME,
-            totalTurns = players.reduce((acc, {moves}) => (acc += moves), 0);
+        const {players, children} = this.props,
+            totalTurns = players.reduce((acc, {numTurns}) => (acc += numTurns), 0);
 
         return <div>
-            <strong>This game played {parseInt(gameTime / 60)} minutes and {parseInt(gameTime % 60)} seconds, during {totalTurns} moves</strong><br/>
+            <strong>This game played, during {totalTurns} moves</strong><br/>
             {this.getEndStats()}<br/>
             {children}
             {children && <br/>}
 
-            Click "OK" to {(okExit || tournamentEnd) ? 'go main menu' : (isTournament ?  'next game' : 'play again')} {noCancel || tournamentEnd ? '' : 'and "Cancel" to go to main menu'}
         </div>;
     }
 }
