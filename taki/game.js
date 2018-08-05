@@ -129,7 +129,8 @@ exports.Game = function(gameName, creator, requiredPlayers) {
             name: me.name,
             round: round,
             players: players.map(p => p.getSummaryView()),
-            winner: winners
+            winner: winners,
+            state: me.state
         };
     };
 
@@ -137,7 +138,7 @@ exports.Game = function(gameName, creator, requiredPlayers) {
         let card = player.getCard(cardIndex);
         if (!card) return {success: false, error: errors.MOVE_UNAVAILABLE};
 
-        if (!board.isCardElligible(card)) return {success: false, error: errors.MOVE_ILLEGAL};
+        if (!board.isCardEligible(card)) return {success: false, error: errors.MOVE_ILLEGAL};
 
         board.placeCard(card);
         player.removeCard(cardIndex);
@@ -145,11 +146,9 @@ exports.Game = function(gameName, creator, requiredPlayers) {
     };
 
     const takeCard = function(player) {
-        if(!board.isTake2Mode()){
-            if (player.hasElligibleCards(board.getTop())) 
-                return {success: false, error: errors.MOVE_ELLIGIBLE_CARDS};
+        if (player.hasEligibleCards(board.getTop(), board.isTake2Mode())) {
+            return {success: false, error: errors.MOVE_ELLIGIBLE_CARDS};
         }
-        //board.endTake2();
         player.addCards(board.takeCard());
         return {success: true};
     };

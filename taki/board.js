@@ -94,9 +94,10 @@ exports.Board = function(nplayers, dealer) {
         return getCards(cardsToDraw);
     };
 
-    me.isCardElligible = function(card) {
-        if(take2Mode && card.type !== cardTypes.Take2){ return false;}
-        return cards.isElligible(card, me.getTop());
+    me.isCardEligible = function(card) {
+        // if(take2Mode && card.type !== cardTypes.Take2){ return false; }
+        // if(card.type === cardTypes.SuperTaki && card.color === cardColors.None){ return true;}
+        return cards.isEligible(card, me.getTop(), take2Mode);
     };
 
     me.takeCard = function() {
@@ -105,8 +106,9 @@ exports.Board = function(nplayers, dealer) {
         endTurn();
         return cards;
     }
+
     me.placeCard = function(card) {
-        if(card.type !== cardTypes.SuperTaki || card.color !== cardColors.None){
+        if(card.type !== cardTypes.Taki || card.color !== cardColors.None){
             if(card.type === cardTypes.Take2){
                 take2Mode = true;
             }
@@ -155,10 +157,9 @@ exports.Board = function(nplayers, dealer) {
                 if (lastPlayedCard.type === cardTypes.Take2) take2Counter += 2; 
             }
         }
-        if (!takiMode){
-            //lastPlayedCard = null;
-            console.log("advance turn");
-            advanceTurn();  
-        }
+        if (lastPlayedCard && lastPlayedCard.type === cardTypes.Plus || takiMode) return;
+
+        console.log("advance turn");
+        advanceTurn();  
     };
 };

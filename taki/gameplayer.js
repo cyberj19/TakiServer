@@ -31,8 +31,8 @@ exports.GamePlayer = function(name,id,state) {
     me.setWin = function(win) {
         me.win = win;
     }
-    me.hasElligibleCards = function(currentCard) {
-        return cards.some(c=>cardsModule.isElligible(c,currentCard));
+    me.hasEligibleCards = function(currentCard, take2mode) {
+        return cards.some(c=>cardsModule.isEligible(c,currentCard,take2mode));
     };
 
     const getView = function(currentPlayerId) {
@@ -73,17 +73,6 @@ exports.GamePlayer = function(name,id,state) {
 
     me.hasCards = function() {
         return cards.length > 0;
-    };
-
-    const getCardIndex = function(card) {
-        for (let i = 0; i < cards.length; i++) {
-            if (cards[i].type === card.type) {
-                if (card.type === cardTypes.Color || card.type === cardTypes.SuperTaki)
-                    return i;
-                if (card.color === cards[i].color) return i;
-            }
-        }
-        return -1;
     };
 
     me.getCard = function(card) {

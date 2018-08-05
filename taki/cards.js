@@ -2,9 +2,10 @@ const consts = require('./consts.js');
 const cardTypes = consts.cardTypes;
 const cardColors = consts.cardColors;
 
-exports.isElligible = function(newCard, currentCard) {
-    if (newCard.type === cardTypes.Color || 
-        (newCard.type === cardTypes.SuperTaki && newCard.color === cardColors.None)) 
+exports.isEligible = function(newCard, currentCard, take2mode) {
+    if (take2mode) return newCard.type === cardTypes.Take2;
+    
+    if (newCard.type === cardTypes.Color) 
         return true;
 
     console.log('Card is of concrete type');

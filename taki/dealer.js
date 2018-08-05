@@ -31,13 +31,16 @@ exports.defaultDeck = function () {
         }
     }
 
+    // add SuperTaki cards
     deck.push({
         color: cardColors.None,
-        type: cardTypes.SuperTaki
+        type: cardTypes.Taki,
+        wasSuperTaki: true
     });
     deck.push({
         color: cardColors.None,
-        type: cardTypes.SuperTaki
+        type: cardTypes.Taki,
+        wasSuperTaki: true
     });
 
     return deck;
@@ -74,6 +77,7 @@ exports.Delear = function (initCards, type) {
 
     this.returnCards = function(oldCards) {
         for (let i = oldCards.length-1; i >= 0; i--) {
+            if (oldCards[i].wasSuperTaki) oldCards[i].color = cardColors.None;
             cards.unshift(oldCards[i]);
         }
     }
