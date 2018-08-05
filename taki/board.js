@@ -76,10 +76,12 @@ exports.Board = function(nplayers, dealer) {
         return newCards;
     }
     me.isTakiMode = function() {return takiMode;}
+    me.isTake2Mode = function() {return take2Mode;}
 
     const endTake2 = function(){
         take2Counter = 0;
         take2Mode = false;
+        lastPlayedCard = null;
     };
 
     me.dealCard = function(n) {
@@ -121,12 +123,14 @@ exports.Board = function(nplayers, dealer) {
 
     me.endTaki = function() {
         takiMode = false;
+        lastPlayedCard = null;
         endTurn();
-    }
+    };
 
-    me.endTake2 = function() {
+    /*me.endTake2 = function() {
         take2Mode = false;
-    }
+        take2Counter = 0;
+    };*/
 
     const advanceTurn = function() {
         currentTurn += direction;
@@ -152,9 +156,9 @@ exports.Board = function(nplayers, dealer) {
             }
         }
         if (!takiMode){
-            lastPlayedCard = null;
+            //lastPlayedCard = null;
+            console.log("advance turn");
+            advanceTurn();  
         }
-        console.log("advance turn");
-        advanceTurn();   
     };
 };

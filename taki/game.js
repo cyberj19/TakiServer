@@ -145,9 +145,11 @@ exports.Game = function(gameName, creator, requiredPlayers) {
     };
 
     const takeCard = function(player) {
-        if (player.hasElligibleCards(board.getTop())) 
-            return {success: false, error: errors.MOVE_ELLIGIBLE_CARDS};
-        board.endTake2();
+        if(!board.isTake2Mode()){
+            if (player.hasElligibleCards(board.getTop())) 
+                return {success: false, error: errors.MOVE_ELLIGIBLE_CARDS};
+        }
+        //board.endTake2();
         player.addCards(board.takeCard());
         return {success: true};
     };
