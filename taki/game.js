@@ -212,7 +212,7 @@ exports.Game = function(gameName, creator, requiredPlayers) {
         board.removeWinner(winner.id);
         winner.state = gamePlayerStates.Finished;
         winners.push(winner.name);
-        winner.setWinner(winners.length);
+        winner.setWin(winners.length);
         activePlayers--;
     }
 
