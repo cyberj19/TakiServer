@@ -138,6 +138,7 @@ exports.Game = function(gameName, creator, requiredPlayers) {
 
     const playCard = function(player, cardIndex) {
         let card = player.getCard(cardIndex);
+        console.log('[GAME] Card: ' + JSON.stringify(card));
         if (!card) return {success: false, error: errors.MOVE_UNAVAILABLE};
 
         if (!board.isCardEligible(card)) return {success: false, error: errors.MOVE_ILLEGAL};
@@ -162,7 +163,7 @@ exports.Game = function(gameName, creator, requiredPlayers) {
     };
 
     me.move = function(params) {
-        console.log('game.playerMove: '+params.move+ ', player:' + params.player +', card: ' +params.card);
+        console.log('[GAME] Move:' + params.move + '; Player:' + params.player);
         let player = players.find(p => p.name === params.player);
         if (!player) return {success:false, error: errors.PLAYER_UNKNOWN};
 

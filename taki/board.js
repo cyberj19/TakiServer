@@ -22,9 +22,7 @@ exports.Board = function (nplayers, dealer) {
     let lastPlayedCard = null;
     let take2Counter = 0;
     let takiMode = false;
-    let numPlayers = nplayers;
     let activePlayersIds = [];
-    let take2Mode = false;
 
     me.getTop = function () {
         return stack[stack.length - 1];
@@ -47,8 +45,6 @@ exports.Board = function (nplayers, dealer) {
         };
         return {
             initialized: true,
-            // isDeckEmpty: dealer.isEmpty(),
-            // heap: [me.getTop()],
             heap: stack,
             direction: direction,
             activeTwo: take2Counter,
@@ -81,12 +77,11 @@ exports.Board = function (nplayers, dealer) {
         return takiMode;
     }
     me.isTake2Mode = function () {
-        return take2Mode;
+        return take2Counter > 0;
     }
 
     const endTake2 = function () {
         take2Counter = 0;
-        take2Mode = false;
         lastPlayedCard = null;
     };
 
@@ -94,16 +89,14 @@ exports.Board = function (nplayers, dealer) {
         var cardsToDraw = 1;
         if (n) {
             cardsToDraw = n;
-        } else if (take2Counter > 0) {
+        } else if (me.isTake2Mode()) {
             cardsToDraw = take2Counter;
         }
         return getCards(cardsToDraw);
     };
 
     me.isCardEligible = function (card) {
-        // if(take2Mode && card.type !== cardTypes.Take2){ return false; }
-        // if(card.type === cardTypes.SuperTaki && card.color === cardColors.None){ return true;}
-        return cards.isEligible(card, me.getTop(), take2Mode);
+        return cards.isEligible(card, me.getTop(), me.isTake2Mode());
     };
 
     me.takeCard = function () {
@@ -115,7 +108,7 @@ exports.Board = function (nplayers, dealer) {
 
     me.placeCard = function (card) {
         if (!card.wasSuperTaki) {
-            if (cards.isTaki(lastPlayedCard)) {
+            if (cards.isTaki(card)) {
                 takiMode = true;
             }
             stack.push(card);
@@ -128,20 +121,16 @@ exports.Board = function (nplayers, dealer) {
             };
             stack.push(newcard);
             lastPlayedCard = card;
+            takiMode = true;
         }
         endTurn();
     };
 
     me.endTaki = function () {
         takiMode = false;
-        lastPlayedCard = null;
         endTurn();
+        lastPlayedCard = null;
     };
-
-    /*me.endTake2 = function() {
-        take2Mode = false;
-        take2Counter = 0;
-    };*/
 
     const advanceTurn = function () {
         currentTurn += direction;
@@ -149,19 +138,29 @@ exports.Board = function (nplayers, dealer) {
     };
 
     const endTurn = function () {
-        // if (!lastPlayedCard)
-        //     return advanceTurn();
+        if(takiMode) return;
         if (cards.isTake2(lastPlayedCard)) {
             take2Mode = true;
         }
         if (lastPlayedCard) {
-            if (lastPlayedCard.type === cardTypes.ChangeDirection) {
+            let type = lastPlayedCard.type;
+            if (type === cardTypes.ChangeDirection) {
                 direction *= -1;
-            } else if (lastPlayedCard.type !== cardTypes.Plus && !takiMode) {
-                if (lastPlayedCard.type === cardTypes.Stop) currentTurn += direction;
-                if (lastPlayedCard.type === cardTypes.Take2) take2Counter += 2;
-            } else return;
-        } else if (takiMode) return;
+                console.log('[BOARD] Change direction');
+            }
+            if (type === cardTypes.Stop) {
+                currentTurn += direction;
+                console.log('[BOARD] Stop: advance twice');
+            }
+            if (type === cardTypes.Take2) {
+                take2Counter += 2;
+                console.log('[BOARD] Increase take 2 counter');
+            }
+            if (type === cardTypes.Plus) {
+                console.log('[BOARD] Plus: dont advance');
+                return;
+            }
+        } 
 
         console.log("advance turn");
         advanceTurn();
