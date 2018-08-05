@@ -59,7 +59,7 @@ exports.Board = function (nplayers, dealer) {
         initialized = true;
     };
 
-    const resetDelear = function () {
+    const resetDealer = function () {
         temp = stack.pop();
         dealer.returnCards(stack);
         stack = [temp];
@@ -68,7 +68,7 @@ exports.Board = function (nplayers, dealer) {
     const getCards = function (n) {
         var newCards = [];
         for (let i = 0; i < n; i++) {
-            if (dealer.isEmpty()) resetDelear();
+            if (dealer.isEmpty()) resetDealer();
             newCards.push(dealer.getCard());
         }
         return newCards;

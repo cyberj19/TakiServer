@@ -7,6 +7,8 @@ const gamePlayerStates = consts.gamePlayerStates;
 const Board = require('./board.js');
 const GamePlayer = require('./gameplayer.js').GamePlayer;
 
+const INITIAL_CARDS_NUMBER = 8;
+
 exports.Game = function(gameName, creator, requiredPlayers) {
     let me = this;
 
@@ -17,6 +19,7 @@ exports.Game = function(gameName, creator, requiredPlayers) {
 
     let winners = [];
     let players = [];
+    let fplayers = [];
     let playersCount = 0;
 
     let observers = [];
@@ -45,9 +48,11 @@ exports.Game = function(gameName, creator, requiredPlayers) {
     }
 
     const start = function() {
+        winners = [];
+        fplayers = [];
         board.initialize(players.map(p => p.id));
         for (let player of players) {
-            player.addCards(board.dealCard(8));
+            player.addCards(board.dealCard(INITIAL_CARDS_NUMBER));
             player.state = gamePlayerStates.Playing;
             if (player.id === board.getCurrentPlayerId())
                 player.startTurn();
@@ -130,7 +135,7 @@ exports.Game = function(gameName, creator, requiredPlayers) {
         return {
             name: me.name,
             round: round,
-            players: players.map(p => p.getSummaryView()),
+            players: fplayers,
             winner: winners,
             state: me.state
         };
@@ -214,6 +219,7 @@ exports.Game = function(gameName, creator, requiredPlayers) {
     }
     const playerWin = function(winner) {
         board.removeWinner(winner.id);
+        fplayers.push(winner.getSummaryView());
         winner.state = gamePlayerStates.Finished;
         winners.push(winner.name);
         winner.setWin(winners.length);
@@ -237,10 +243,17 @@ exports.Game = function(gameName, creator, requiredPlayers) {
         return {success: true};
     };
 
+    const resetGameState = function() {
+        if (me.state === gameStates.Finishing && players.length === 0) {
+            me.state = gameStates.Pending;
+        }
+
+    }
     const removePlayerAtIndex = function(index) {
         let player = players[index];
         if (player.state === gamePlayerStates.Finished || me.state === gameStates.Pending) {
             players.splice(index, 1);
+            resetGameState();
             return {success: true};
         }
         return {success: false, error: errors.GAME_CANNOT_LEAVE_WHILE_PLAYING};
