@@ -74,6 +74,7 @@ exports.Game = function(gameName, creator, requiredPlayers) {
         let gameView = {
             name: me.name,
             state: me.state,
+            isPlayer: false,
 
             winners: winners,
             players: vplayers,
@@ -102,6 +103,7 @@ exports.Game = function(gameName, creator, requiredPlayers) {
         let gameView = {
             name: me.name,
             state: me.state,
+            isPlayer: true,
 
             winners: winners,
             players: playerViews,

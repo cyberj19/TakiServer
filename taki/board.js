@@ -53,6 +53,7 @@ exports.Board = function (nplayers, dealer) {
     };
 
     me.initialize = function (playerIds) {
+        stack=[];
         stack.push(dealer.getFirstCard());
         activePlayersIds = playerIds;
         currentTurn = 0;
@@ -132,16 +133,13 @@ exports.Board = function (nplayers, dealer) {
         lastPlayedCard = null;
     };
 
-    const advanceTurn = function () {
-        currentTurn += direction;
+    const advanceTurn = function (turnsToAdvance) {
+        currentTurn += turnsToAdvance*direction;
         currentTurn = (currentTurn + activePlayersIds.length) % activePlayersIds.length;
     };
 
-    const endTurn = function () {
-        if(takiMode) return;
-        if (cards.isTake2(lastPlayedCard)) {
-            take2Mode = true;
-        }
+    const handleSpecialCards = function() {
+        let turnsToAdvance = 1;
         if (lastPlayedCard) {
             let type = lastPlayedCard.type;
             if (type === cardTypes.ChangeDirection) {
@@ -149,7 +147,7 @@ exports.Board = function (nplayers, dealer) {
                 console.log('[BOARD] Change direction');
             }
             if (type === cardTypes.Stop) {
-                currentTurn += direction;
+                turnsToAdvance = 2;
                 console.log('[BOARD] Stop: advance twice');
             }
             if (type === cardTypes.Take2) {
@@ -158,11 +156,16 @@ exports.Board = function (nplayers, dealer) {
             }
             if (type === cardTypes.Plus) {
                 console.log('[BOARD] Plus: dont advance');
-                return;
+                turnsToAdvance = 0;
             }
         } 
-
-        console.log("advance turn");
+        return turnsToAdvance;
+    }
+    const endTurn = function () {
+        if(takiMode) return;
+        let turnsToAdvance = handleSpecialCards();
+        advanceTurn(turnsToAdvance);
+        console.log("[BOARD] Advance turn");
         advanceTurn();
     };
 };
