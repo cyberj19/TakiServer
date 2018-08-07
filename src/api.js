@@ -3,7 +3,7 @@ const session = require('express-session');
 const express = require('express');
 const HTTPServer = require('http');
 const bodyParser = require('body-parser');
-//const serveStatic = require('serve-static');
+
 
 exports.APIServer = function(params, taki) {
     let app = express();
