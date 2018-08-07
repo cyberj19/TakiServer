@@ -73,7 +73,8 @@ exports.APIServer = function(params, taki) {
 
         let res = taki.joinGame({
             player: request.body.player,
-            game: request.body.game
+            game: request.body.game,
+            asObserver: request.body.asObserver
         });
 
         if (res.success) {
