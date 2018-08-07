@@ -490,7 +490,7 @@ li.clock::before {
 }
 .deck.opp.deck--left .deck-stats,
 .deck.opp.deck--right .deck-stats {
-    top: -10vh
+    top: 2vh
 }
 .player .deck-stats {
 

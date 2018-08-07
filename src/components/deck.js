@@ -85,8 +85,8 @@ class Deck extends React.Component {
             <div className="deck-stats">
                 {gameEnd && <span className="deck-stats__winner">{winIndex + 1}</span>}
                 <h2>{name || type}</h2>
-                {numTurns && <h3>{getText('totalMoves')} {numTurns}</h3>}
-                {avgTimePerTurn ? <h3>{getText('avgMoves')} {toTimeString(avgTimePerTurn)}</h3> : null}
+                {typeof numTurns === 'number' && <h3>{getText('totalMoves')} {numTurns}</h3>}
+                {typeof avgTimePerTurn === 'number' ? <h3>{getText('avgMoves')} {toTimeString(avgTimePerTurn)}</h3> : null}
             </div>
             {!!cards.length && cards.map(({type: cardType, color, isIn, isOut}, i) => {
                 const cardEligible = turn && isCardEligible({type: cardType, color}),
