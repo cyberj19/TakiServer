@@ -485,11 +485,12 @@ li.clock::before {
     content: "\265b: ";
 }
 .deck.opp.deck--left .deck-stats {
-    left: 10vw
+    left: 10vw;
+    right: auto;
 }
 .deck.opp.deck--left .deck-stats,
 .deck.opp.deck--right .deck-stats {
-    top: -20vw
+    top: -10vh
 }
 .player .deck-stats {
 

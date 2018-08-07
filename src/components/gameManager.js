@@ -1,7 +1,6 @@
 import React from "react";
 import {getText, getCompName} from "../modules/texts.mjs";
 import GamePlay from "./gamePlay";
-//import GameView from "./gameView";
 import {apiCall} from "../helpers/http";
 import Dialog from "./dialog";
 import NewGameWizard from "./newGameWizard";
@@ -30,15 +29,11 @@ class GameManager extends React.Component {
             computerName: getCompName()
         };
 
-        this.setGame = this.setGame.bind(this);
         this.setView = this.setView.bind(this);
         this.getViews = this.getViews.bind(this);
-        this.endGame = this.endGame.bind(this);
         this.logoutView = this.logoutView.bind(this);
-        this.getViewMode = this.getViewMode.bind(this);
         this.inputChange = this.inputChange.bind(this);
         this.closeViewMode = this.closeViewMode.bind(this);
-        this.startViewMode = this.startViewMode.bind(this);
         this.openNewGameModal = this.openNewGameModal.bind(this);
         this.closeNewGameModal = this.closeNewGameModal.bind(this);
         this.openSettingsModal = this.openSettingsModal.bind(this);
@@ -59,20 +54,7 @@ class GameManager extends React.Component {
         apiCall('view', {player: this.state.playerName}, this.setView);
     }
 
-    startViewMode(stats) {
-        /*const {currentGameType, currentGame, gamesStats} = this.state;
 
-        this.setState({
-            gamesStats: [...gamesStats, {
-                stats: JSON.parse(JSON.stringify(stats)),
-                gameType: currentGameType,
-                game: currentGame
-            }],
-            currentGameType: null,
-            currentGameId: null,
-            viewMode: currentGame
-        });*/
-    }
 
     closeViewMode() {
         this.setState({
@@ -85,26 +67,6 @@ class GameManager extends React.Component {
         this.setState({players, currentGame: game, availableGames: games});
     }
 
-    endGame(stats, replay) {
-        /*const {currentGameType, currentGameId, gamesStats} = this.state;
-
-        this.setState({
-            gamesStats: [...gamesStats, {
-                stats: JSON.parse(JSON.stringify(stats)),
-                gameType: currentGameType,
-                gameId: currentGameId
-            }],
-            currentGameType: replay ? currentGameType : null,
-            currentGameId: replay ? [currentGameId.split('-')[0], performance.now()].join('-') : null,
-        });*/
-    }
-
-    setGame(gameType, id) {
-        /*this.setState({
-            currentGameType: gameType,
-            currentGameId: id
-        });*/
-    }
 
     openSettingsModal() {
         this.setState({settingsModal: true});
@@ -138,13 +100,6 @@ class GameManager extends React.Component {
         this.setState({playerName: e.target.value.length ? e.target.value : null});
     }
 
-
-    getViewMode(gameStatsId) {
-        // const {gamesStats, playerName, computerName} = this.state;
-        // return <GameView closeView={this.closeViewMode}
-        //                  names={{[PLAYER_TYPE]: playerName, [COMPUTER_TYPE]: computerName}}
-        //                  moves={gamesStats.filter(({gameId}) => gameId === gameStatsId)[0].stats}/>
-    }
 
     logoutView() {
         return <li onClick={() => apiCall('logout', {player: this.state.playerName}, () => this.setState({settingsModal: false, loggedIn: false}))} className="logout">

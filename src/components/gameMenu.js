@@ -77,9 +77,6 @@ class GameMenu extends React.Component {
                 {endGameFn && <li onClick={endGameFn} className="exit">
                     Exit game
                 </li>}
-                {/*<li onClick={() => this.openModal(RESTART)} className="restart">
-                    Restart
-                </li>*/}
                 <li className="clock">
                     <Timer startTime={startTime}/>
                     <hr/>

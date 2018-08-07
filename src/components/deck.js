@@ -1,8 +1,7 @@
 import React from "react";
 import {UNCOLORED_COLOR, cardsColors, CARDS} from "../modules/cards.mjs";
 import {getText, toTimeString} from "../modules/texts.mjs";
-import {TOURNAMENS_GAME , ACTION_INIT_PACK, PLAYER_TYPE} from '../helpers/constants';
-import ComputerPlayer from "./computerPlayer";
+import { PLAYER_TYPE} from '../helpers/constants';
 import Dialog from "./dialog";
 
 class Deck extends React.Component {
