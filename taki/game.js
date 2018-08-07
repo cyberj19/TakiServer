@@ -50,6 +50,7 @@ exports.Game = function(gameName, creator, requiredPlayers) {
     const start = function() {
         winners = [];
         fplayers = [];
+        board.resetHeap();
         board.initialize(players.map(p => p.id));
         for (let player of players) {
             player.addCards(board.dealCard(INITIAL_CARDS_NUMBER));
@@ -66,7 +67,7 @@ exports.Game = function(gameName, creator, requiredPlayers) {
 
     const getObserverView = function() {
         let vplayers = null;
-        if (state === gameStates.Pending) {
+        if (me.state === gameStates.Pending) {
             vplayers = players.map(p => {name: p.name});
         } else {
             vplayers = players.map(p => p.getSelfView(board.getCurrentPlayerId()));
@@ -84,10 +85,10 @@ exports.Game = function(gameName, creator, requiredPlayers) {
         
         let boardView = board.getView();
         if (boardView.initialized) {
-            gameView.activeTwo = boardView.special_modes.take2;
-            gameView.heap = [boardView.stack_top];
-            gameView.direction = boardView.turn.direction;
-            gameView.isTaki = boardView.special_modes.taki;
+            gameView.activeTwo = boardView.take2;
+            gameView.heap = boardView.heap;
+            gameView.direction = boardView.direction;
+            gameView.isTaki = boardView.taki;
         }
 
         return gameView;
@@ -228,10 +229,10 @@ exports.Game = function(gameName, creator, requiredPlayers) {
         activePlayers--;
     }
 
-    me.addPlayer = function(player, asObserver) {
-        if (me.state !== gameStates.Pending) return {success: false, error: errors.GAME_ALREADY_STARTED};
+    me.addPlayer = function(player, asObserver=false) {
+        if (me.state !== gameStates.Pending && !asObserver) return {success: false, error: errors.GAME_ALREADY_STARTED};
         if (isPlayerInGame(player)) return {success: false, error: errors.GAME_PLAYER_ALREADY_IN_GAME};
-
+        console.log("asObserver: "+asObserver);
         if (asObserver) {
             observers.push({name: player});
             return {success: true};

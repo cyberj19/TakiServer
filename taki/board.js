@@ -16,7 +16,7 @@ exports.Board = function (nplayers, dealer) {
     let me = this;
 
     let initialized = false;
-    let stack = [];
+    let heap = [];
     let direction = 1;
     let currentTurn = 0;
     let lastPlayedCard = null;
@@ -25,7 +25,7 @@ exports.Board = function (nplayers, dealer) {
     let activePlayersIds = [];
 
     me.getTop = function () {
-        return stack[stack.length - 1];
+        return heap[heap.length - 1];
     };
 
     me.removeWinner = function (winnerId) {
@@ -45,25 +45,28 @@ exports.Board = function (nplayers, dealer) {
         };
         return {
             initialized: true,
-            heap: stack,
+            heap: heap,
             direction: direction,
             activeTwo: take2Counter,
-            isTaki: takiMode
+            isTaki: takiMode,
+            take2: take2Counter>0
         };
     };
 
     me.initialize = function (playerIds) {
-        stack=[];
-        stack.push(dealer.getFirstCard());
+        heap.push(dealer.getFirstCard());
         activePlayersIds = playerIds;
         currentTurn = 0;
         initialized = true;
     };
 
+    me.resetHeap = function(){
+        heap=[];
+    }
     const resetDealer = function () {
-        temp = stack.pop();
-        dealer.returnCards(stack);
-        stack = [temp];
+        temp = heap.pop();
+        dealer.returnCards(heap);
+        heap = [temp];
     };
 
     const getCards = function (n) {
@@ -112,7 +115,7 @@ exports.Board = function (nplayers, dealer) {
             if (cards.isTaki(card)) {
                 takiMode = true;
             }
-            stack.push(card);
+            heap.push(card);
             lastPlayedCard = card;
         } else {
             let newcard = {
@@ -120,7 +123,7 @@ exports.Board = function (nplayers, dealer) {
                 color: me.getTop().color,
                 wasSuperTaki: true
             };
-            stack.push(newcard);
+            heap.push(newcard);
             lastPlayedCard = card;
             takiMode = true;
         }

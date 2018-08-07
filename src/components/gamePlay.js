@@ -152,7 +152,6 @@ class GamePlay extends React.Component {
                         gameType,
                         className: deckClass[i],
                         winner: _winners,
-                        score: this.getPlayerScore(i),
                         chooseCard: this.chooseCard,
                         isCardEligible: this.isCardEligible,
                         heapCard: topCard,
