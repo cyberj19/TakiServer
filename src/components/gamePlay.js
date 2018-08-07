@@ -36,6 +36,7 @@ class GamePlay extends React.Component {
         this.endTaki = this.endTaki.bind(this);
         this.leaveGame = this.leaveGame.bind(this);
         this.getPlayer = this.getPlayer.bind(this);
+        this.getDeckClasses = this.getDeckClasses.bind(this);
         this.setHeap = this.setHeap.bind(this);
         this.setStack = this.setStack.bind(this);
         this.pullCard = this.pullCard.bind(this);
@@ -236,6 +237,22 @@ class GamePlay extends React.Component {
         return state === 'Finish' && ''
     }
 
+    getDeckClasses() {
+
+        const {playerName, gameObj} = this.props,
+            {players} = gameObj,
+            playersLength = players.length,
+            _classnames = playersLength === 4 ? ['deck--left', 'deck--top', 'deck--right'] : playersLength === 3 ? ['deck--left', 'deck--right'] : ['deck--top'],
+            classnames = [];
+        let index = 0;
+        players.forEach((player, i) => {if (player.name === playerName) index = i;});
+        for (let i = 1; i < playersLength; ++i) {
+            classnames[(index + i) % playersLength] = _classnames[i - 1];
+        }
+
+        return classnames;
+
+    }
     getPlayerScore(player) {
         //const {tourScores} = this.state;
         //return tourScores ? tourScores.reduce((acc, {player : scorePlayer, score}) => acc += scorePlayer === player ? score : 0, 0) : 0
@@ -246,7 +263,8 @@ class GamePlay extends React.Component {
             {cantPullModal, startTime} = this.state,
             {players, heap, winner, winners, tourScores, activeTwo,
                 isTaki, state} = gameObj,
-            _winners = winner || winners || [];
+            _winners = winner || winners || [],
+            deckClass = this.getDeckClasses();
 
 
         if (state !== 'Pending') {
@@ -256,6 +274,7 @@ class GamePlay extends React.Component {
                     isFinish = _winners.indexOf(playerName) > -1,
                     deckProps = i => ({
                         gameType,
+                        className: deckClass[i],
                         winner: _winners,
                         score: this.getPlayerScore(i),
                         chooseCard: this.chooseCard,
