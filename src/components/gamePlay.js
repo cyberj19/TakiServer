@@ -3,16 +3,11 @@ import Deck from "./deck"
 import {
     PLAYER_TYPE,
     OPP_TYPE,
-    ACTION_CHOOSE_CARD,
     MOVE_TAKE,
     MOVE_TAKI,
     MOVE_CARD,
 } from '../helpers/constants';
 import {
-    cardsColors,
-    regularCards,
-    getCardScore,
-    unColoredCards,
     UNCOLORED_COLOR,
     CARDS,
 } from "../modules/cards.mjs";
@@ -36,20 +31,11 @@ class GamePlay extends React.Component {
         this.endTaki = this.endTaki.bind(this);
         this.leaveGame = this.leaveGame.bind(this);
         this.getPlayer = this.getPlayer.bind(this);
-        this.getDeckClasses = this.getDeckClasses.bind(this);
-        this.setHeap = this.setHeap.bind(this);
-        this.setStack = this.setStack.bind(this);
-        this.pullCard = this.pullCard.bind(this);
-        this.nextTurn = this.nextTurn.bind(this);
-        this.startGame = this.startGame.bind(this);
-        this.setEndTime = this.setEndTime.bind(this);
         this.chooseCard = this.chooseCard.bind(this);
         this.cantPullCard = this.cantPullCard.bind(this);
         this.pullFromStack = this.pullFromStack.bind(this);
-        this.getPlayerScore = this.getPlayerScore.bind(this);
         this.isCardEligible = this.isCardEligible.bind(this);
-        this.calcEndGameScore = this.calcEndGameScore.bind(this);
-        this.getWinnerRender = this.getWinnerRender.bind(this);
+        this.getDeckClasses = this.getDeckClasses.bind(this);
         this.closePullCardModal = this.closePullCardModal.bind(this);
         this.playerHasEligibleCard = this.playerHasEligibleCard.bind(this);
     }
@@ -92,33 +78,6 @@ class GamePlay extends React.Component {
     }
 
 
-
-    setStack(forceInit) {
-        // const {stack} = this.state;
-        // let {heap} = this.state;
-        //
-        // if (!forceInit && !!stack.length) return; // if stack isn't empty no need to set it again
-        //
-        // if (!forceInit && !!heap.length) { // if there is a heap already it will take the heap (and leave there only the top card)
-        //     this.setState({heap: [{...heap[heap.length - 1]}], stack: [...heap.slice(0, -1)]});
-        // }
-        // else { // there is a need to create a new stack from the constants
-        //     let tmpStack = [];
-        //     for (let i = 0; i < 2; ++i) {
-        //         regularCards.forEach(type => {
-        //             cardsColors.forEach(color => {
-        //                 tmpStack.push({type, color});
-        //             });
-        //         });
-        //         unColoredCards.forEach(type => { // all uncolored cards are at least twice
-        //             tmpStack.push({type, color: UNCOLORED_COLOR});
-        //         });
-        //         tmpStack.push({type: CARDS.COLOR, color: UNCOLORED_COLOR}); // color card is 4 timer (2 more)
-        //     }
-        //     this.setState({stack: tmpStack});
-        // }
-    }
-
     chooseCard(cardIndex, color) {
 
         const {playerName, gameObj : {name}} = this.props,
@@ -137,16 +96,6 @@ class GamePlay extends React.Component {
         return false;
     }
 
-    calcEndGameScore(winner) {
-        /*const {players} = this.state;
-        return {player: winner, score: players.reduce((acc, {cards}) => acc += cards.reduce((pre, card) => pre += getCardScore(card), 0), 0)};
-    */
-    }
-
-    setEndTime() {
-        //this.setState({endTime: performance.now()});
-    }
-
     isCardEligible(card) {
         const {heap, activeTwo, isTaki} = this.props.gameObj,
             topCard = heap[heap.length - 1];
@@ -159,17 +108,6 @@ class GamePlay extends React.Component {
                     && card.color !== topCard.color)
     }
 
-    nextTurn(turns = 1) {
-        /*const {turn, players, winner} = this.state,
-            nextTurn = (turn + turns) % players.length;
-
-        winner === null && this.setState({turn: nextTurn});*/
-    }
-
-    setHeap() {
-        //this.setState({heap: [this.pullCard(HEAP_TYPE)]});
-    }
-
     cantPullCard() {
         this.setState({cantPullModal: true});
     }
@@ -178,64 +116,6 @@ class GamePlay extends React.Component {
         this.setState({cantPullModal: false});
     }
 
-    pullCard(rquire) {
-        // const {stack} = this.state;
-        // let tempStack = [...stack],
-        //     cardLoc = Math.floor(Math.random() * tempStack.length); // Every pull we shuffeling
-        // while (rquire === HEAP_TYPE && tempStack[cardLoc].color === UNCOLORED_COLOR) {
-        //     cardLoc = Math.floor(Math.random() * tempStack.length);
-        // }
-        // const newCard = {...tempStack[cardLoc]};
-        // tempStack.splice(cardLoc, 1);
-        // this.setState({stack: tempStack});
-        // this.setStack();
-        // return newCard;
-    };
-
-    startGame() {
-        /*const {players, stack} = this.props.gameObj,
-            playersCount = players; // init empty array for each player
-        let tempStack = [...stack],
-            newCards = players.map(() => []);
-
-        for (let i = 0; i < 8 * playersCount; ++i) {
-            let cardLoc = Math.floor(Math.random() * tempStack.length);
-            newCards[i % playersCount].push(tempStack[cardLoc]);
-            tempStack.splice(cardLoc, 1);
-        }
-
-        this.setState({
-            stack: tempStack,
-            players: players.map((player, i) => {
-                return {
-                    ...player, ...{
-                        cards: [...newCards[i]],
-                        moves: [{
-                            type: ACTION_INIT_PACK,
-                            cards: [...newCards[i]],
-                            time: performance.now(),
-                            playerType: player.type
-                        }]
-                    }
-                }
-            }),
-            turn: 0,
-            winner: null,
-            startTime: performance.now(),
-            lastAction: performance.now(),
-            endTime: null,
-            activeAction: null,
-            twoInAction: 0,
-            activeTurn: true,
-        });*/
-    }
-
-    getWinnerRender() {
-        const {gameType, gameObj} = this.props,
-            {winners, players, heap, state} = gameObj;
-
-        return state === 'Finish' && ''
-    }
 
     getDeckClasses() {
 
@@ -252,10 +132,6 @@ class GamePlay extends React.Component {
 
         return classnames;
 
-    }
-    getPlayerScore(player) {
-        //const {tourScores} = this.state;
-        //return tourScores ? tourScores.reduce((acc, {player : scorePlayer, score}) => acc += scorePlayer === player ? score : 0, 0) : 0
     }
 
     render() {

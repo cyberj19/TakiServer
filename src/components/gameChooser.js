@@ -7,6 +7,7 @@ class GameChooser extends React.Component {
 
         this.joinGame = this.joinGame.bind(this);
         this.deleteGame = this.deleteGame.bind(this);
+        this.watchGame = this.watchGame.bind(this);
     }
 
     deleteGame() {
@@ -20,6 +21,12 @@ class GameChooser extends React.Component {
         apiCall('joinGame', {player:  player, game: name});
     }
 
+    watchGame() {
+        const {name, player} = this.props;
+
+        apiCall('joinGame', {player:  player, game: name, asObserver: true});
+    }
+
 
     render() {
         const {name, observers, players, required, state, created_by, player} = this.props;
@@ -30,7 +37,7 @@ class GameChooser extends React.Component {
                 <div className="game-chooser__actions">
                     {player === created_by && !players && <div onClick={this.deleteGame} className="game-chooser__actions__delete">X</div>}
                     {state === 'Pending' && <div onClick={this.joinGame} className="game-chooser__actions__play">Join game</div>}
-                    {state === 'Active' && <div className="game-chooser__actions__watch">Watch game</div>}
+                    {state === 'Active' && <div onClick={this.watchGame} className="game-chooser__actions__watch">Watch game</div>}
                 </div>
                 <div className="game-chooser__details">
                     <span className="game-chooser__details__creator">{created_by}</span>
