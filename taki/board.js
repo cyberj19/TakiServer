@@ -136,6 +136,7 @@ exports.Board = function (nplayers, dealer) {
     const advanceTurn = function (turnsToAdvance) {
         currentTurn += turnsToAdvance*direction;
         currentTurn = (currentTurn + activePlayersIds.length) % activePlayersIds.length;
+        console.log("current turn is "+currentTurn);
     };
 
     const handleSpecialCards = function() {
@@ -164,8 +165,8 @@ exports.Board = function (nplayers, dealer) {
     const endTurn = function () {
         if(takiMode) return;
         let turnsToAdvance = handleSpecialCards();
+        console.log("[BOARD] Advance turn: "+turnsToAdvance);
         advanceTurn(turnsToAdvance);
-        console.log("[BOARD] Advance turn");
-        advanceTurn();
+        
     };
 };
