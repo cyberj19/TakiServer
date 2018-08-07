@@ -83,10 +83,6 @@ exports.GamePlayer = function(name,id,state) {
         else{
             return cards[card.index];
         };
-        // console.log(card);
-        // var index = getCardIndex(card);
-        // if (index === -1) return undefined;
-        // return card;
     };
 
     me.addCards = function(newCards) {
@@ -95,7 +91,5 @@ exports.GamePlayer = function(name,id,state) {
 
     me.removeCard = function(card) {
         cards.splice(card.index, 1);
-        // var index = getCardIndex(card);
-        // if (index !== -1) cards.splice(index, 1);
     };
 };

@@ -41,6 +41,6 @@ export const toTimeString = seconds => {
     return getPartTime(timeMins) + ':' + getPartTime(timeSecs);
 };
 
-const computerNames =  ['Danny', 'Yaacov', 'Tomer', 'Ofir', 'David', 'Yonni'];
+const computerNames =  ['Danny', 'Jacob', 'Tomer', 'Ofir', 'David', 'Yonni'];
 
 export const getCompName = () => computerNames[Math.floor(Math.random() * computerNames.length)];
