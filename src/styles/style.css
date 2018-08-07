@@ -326,6 +326,22 @@ li.clock::before {
     height: 2vw;
     counter-reset: section;
 }
+
+.deck.opp.deck--left,
+.deck.opp.deck--right {
+    height: auto;
+    width: 2vw;
+    top: 50%;
+    left: 0;
+    display: inline-block;
+    transform: translateY(-50%);
+}
+
+.deck.opp.deck--right {
+    left: auto;
+    right: 0;
+}
+
 .deck.opp > .card:not([data-card-type])::before {
     content: counter(section);
     counter-increment: section;
@@ -365,6 +381,29 @@ li.clock::before {
 .deck.opp > .card {
     top: -18vw;
 }
+
+.deck.opp.deck--left > .card,
+.deck.opp.deck--right > .card {
+    top: 0;
+    margin: -8.6vw 0;
+    bottom: 0;
+    left: -15vw;
+}
+
+
+.deck.opp.deck--right > .card {
+    left: 2vw
+}
+
+.deck.opp.deck--left > .card:not([data-card-type]):last-of-type::before {
+    top: 2px;
+    right: -1px;
+}
+.deck.opp.deck--right > .card:not([data-card-type]):last-of-type::before {
+    bottom: 2px;
+    left: -1px;
+}
+
 .deck.player {
     bottom: 0;
     -webkit-transition: background-size 1s;
@@ -398,6 +437,16 @@ li.clock::before {
     top: 70%;
     opacity: 0;
 }
+
+
+.deck.opp.deck--right > .card.in {
+    left: -5vw;
+}
+
+.deck.opp.deck--left > .card.in {
+    left: -2vw;
+}
+
 .deck .card {
     -webkit-transform: rotate(35deg);
     -moz-transform: rotate(35deg);
@@ -418,6 +467,7 @@ li.clock::before {
     position: absolute;
     right: 90px;
     top: 10px;
+    min-width: 16vw;
     background: rgba(255,255,255,0.7);
     padding: 10px;
     border-radius: 3px;
@@ -433,6 +483,13 @@ li.clock::before {
 }
 .deck-stats__winner::before {
     content: "\265b: ";
+}
+.deck.opp.deck--left .deck-stats {
+    left: 10vw
+}
+.deck.opp.deck--left .deck-stats,
+.deck.opp.deck--right .deck-stats {
+    top: -20vw
 }
 .player .deck-stats {
 
@@ -538,6 +595,22 @@ li.clock::before {
     -ms-transition: all .3s;
     -o-transition: all .3s;
     transition: all .3s;
+}
+
+.deck.opp.deck--right > .card.chosen {
+    -webkit-transform: rotateY(180deg) translateX(250%);
+    -moz-transform: rotateY(180deg) translateX(250%);
+    -ms-transform: rotateY(180deg) translateX(250%);
+    -o-transform: rotateY(180deg) translateX(250%);
+    transform: rotateY(180deg) translateX(250%);
+}
+
+.deck.opp.deck--left > .card.chosen {
+    -webkit-transform: rotateY(180deg) translateX(-250%);
+    -moz-transform: rotateY(180deg) translateX(-250%);
+    -ms-transform: rotateY(180deg) translateX(-250%);
+    -o-transform: rotateY(180deg) translateX(-250%);
+    transform: rotateY(180deg) translateX(-250%);
 }
 
 .deck.opp > .card.chosen::after {

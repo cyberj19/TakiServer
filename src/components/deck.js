@@ -69,14 +69,14 @@ class Deck extends React.Component {
     render() {
         const {
                 name, type, numTurns, turn, chooseCard, isCardEligible,
-                endTaki, winner, viewMode, avgTimePerTurn
+                endTaki, winner, viewMode, avgTimePerTurn, className
             } = this.props,
             winIndex = winner.indexOf(name),
             gameEnd = winIndex  > -1,
             {colorModalOpen, chosenCardIndex, chosenColor, cards} = this.state,
             isPlayer = type === PLAYER_TYPE;
 
-        return (<div className={`deck ${type} ${turn ? 'active' : ''}`}>
+        return (<div className={`deck ${type} ${turn ? 'active' : ''} ${className || ''}`}>
             {colorModalOpen && <Dialog title={getText('colorDialogTitle')}
                                        cancelFn={this.closeColorModal}
                                        approveFunction={() => chosenColor !== UNCOLORED_COLOR && chooseCard(chosenCardIndex, chosenColor) && this.closeColorModal()}
@@ -98,7 +98,7 @@ class Deck extends React.Component {
                                 onClick: () => cardEligible && (cardType === CARDS.COLOR ? this.openColorModal(i) : chooseCard(i)),
                                 'data-card-type': cardType,
                                 'data-color': color,
-                                className: `card ${cardClassAdd ? cardClassAdd : ( cardEligible ) ? 'active' : 'off'}`
+                                className: `card ${cardClassAdd ? cardClassAdd : ( cardEligible ) ? 'active' : 'off'} `
                             } : {}
                             }
                 />
