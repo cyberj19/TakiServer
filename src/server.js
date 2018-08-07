@@ -3,6 +3,6 @@ const Taki = require('../taki/taki.js').Taki;
 
 
 let taki = new Taki();
-const params = {port: 9229};
+const params = {port: 9230};
 let api = new API(params, taki);
 api.start();
