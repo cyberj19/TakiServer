@@ -6,6 +6,7 @@ const urls = {
     joinGame: {url: '/api/join', method: 'POST'},
     leaveGame: {url: '/api/leave', method: 'POST'},
     move: {url: '/api/game/move', method: 'POST'},
+    msg: {url: '/api/chat/message', method: 'POST'},
     deleteGame: {url: '/api/game/remove', method: 'POST'}
 };
 

@@ -1009,6 +1009,65 @@ li.clock::before {
 }
 /*****************************/
 /*                           */
+/*          Chat             */
+/*                           */
+/*****************************/
+.chat {
+    position: fixed;
+    left: 10px;
+    bottom: 5vh;
+    max-height: 20vh;
+    padding-bottom: 30px;
+    width: 250px;
+    min-height: 10vh;
+    overflow-y: auto;
+    overflow-x: hidden;
+    background: -moz-linear-gradient(top, rgba(255,255,255,0) 0%, rgba(255,255,255,0.6) 100%);
+    background: -webkit-linear-gradient(top, rgba(255,255,255,0) 0%,rgba(255,255,255,0.6) 100%);
+    background: linear-gradient(to bottom, rgba(255,255,255,0) 0%,rgba(255,255,255,0.6) 100%);
+    filter: progid:DXImageTransform.Microsoft.gradient( startColorstr='#00ffffff', endColorstr='#99ffffff',GradientType=0 );
+
+}
+.chat input {
+    position: absolute;
+    border: 1px solid rgba(255, 255, 255, .7);
+    background: transparent;
+    color: #fff;
+    right: 0;
+    bottom: 0;
+    height: 22px;
+    width: calc(100% - 46px);
+    text-indent: 5px;
+
+}
+.chat__submit {
+    position: absolute;
+    border: 1px solid rgba(255, 255, 255, .7);
+    background: #0d00ff;
+    padding: 3px;
+    left: 0;
+    bottom: 0;
+    cursor: pointer;
+}
+/*****************************/
+/*                           */
+/*      Watchers             */
+/*                           */
+/*****************************/
+.watchers {
+    position: fixed;
+    left: 10px;
+    top: 10px;
+    background: rgba(255,255,255,.4);
+    padding: 0 20px 20px;
+    max-height: 10vw;
+    overflow-x: hidden;
+    overflow-y: auto;
+    text-align: left;
+    box-shadow: 2px 2px 10px rgba(0,0,0,0.5);
+}
+/*****************************/
+/*                           */
 /*      Games List         */
 /*                           */
 /*****************************/
