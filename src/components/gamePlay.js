@@ -140,12 +140,11 @@ class GamePlay extends React.Component {
             {cantPullModal, startTime} = this.state,
             {players, heap, winner, winners, observers, messages, name : gameName, isPlayer,tourScores, activeTwo,
                 isTaki, state} = gameObj,
-
-            _winners = winner || winners || [],
-            deckClass = this.getDeckClasses();
+            _winners = winner || winners || [];
 
 
         if (state !== 'Pending') {
+            const deckClass = this.getDeckClasses();
             if ( _winners.length !== players.length) {
                 const topCard = heap[heap.length - 1],
                     player = this.getPlayer(),
@@ -168,7 +167,7 @@ class GamePlay extends React.Component {
                     <Dialog approveFunction={this.closePullCardModal} title={getText('CantPullTitle')}
                             description={getText('CantPullDesc' + (!player.turn ? 'NotPlayer' : (isTaki ? 'Taki' : '')))}
                             isOpen={cantPullModal} noCancel/>
-                    {observers.length ? <div className="watchers"><h3>Watchers ({observers.length}):</h3>{observers.map(({name}) => <div>{name}</div>)}</div> : null}
+                    {observers.length ? <div className="watchers"><h3>Watchers ({observers.length}):</h3>{observers.map(({name}, i) => <div key={i}>{name}</div>)}</div> : null}
                     {players.map((player, i) => <Deck key={i} {...player} {...deckProps(i)}
                                                       type={player.name === playerName ? PLAYER_TYPE : OPP_TYPE}/>)}
                     <div onClick={(player.turn && !isTaki) ? this.pullFromStack : this.cantPullCard}

@@ -37,7 +37,7 @@ class GameChooser extends React.Component {
                 <div className="game-chooser__actions">
                     {player === created_by && !players && <div onClick={this.deleteGame} className="game-chooser__actions__delete">X</div>}
                     {state === 'Pending' && <div onClick={this.joinGame} className="game-chooser__actions__play">Join game</div>}
-                    {state === 'Active' && <div onClick={this.watchGame} className="game-chooser__actions__watch">Watch game</div>}
+                    <div onClick={this.watchGame} className="game-chooser__actions__watch">Watch game</div>
                 </div>
                 <div className="game-chooser__details">
                     <span className="game-chooser__details__creator">{created_by}</span>
