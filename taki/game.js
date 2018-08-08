@@ -280,7 +280,7 @@ exports.Game = function(gameName, creator, requiredPlayers) {
         if (index === -1) return {success: false, error: errors.PLAYER_UNKNOWN};
 
         messages.push({
-            sender: player,
+            sender: params.player,
             text: params.text,
             ts: (new Date()).getTime()
         });
