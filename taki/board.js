@@ -8,7 +8,7 @@ const random = require('../utils/random.js');
 exports.GetTakiBoard = function (nplayers) {
     const DelearModule = require('./dealer.js');
     let deck = DelearModule.defaultDeck();
-    let delear = new DelearModule.Delear(deck, 'random');
+    let delear = new DelearModule.Dealer(deck, 'random');
     return new exports.Board(nplayers, delear);
 }
 

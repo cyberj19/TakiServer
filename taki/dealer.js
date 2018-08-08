@@ -46,7 +46,7 @@ exports.defaultDeck = function () {
     return deck;
 }
 
-exports.Delear = function (initCards, type) {
+exports.Dealer = function (initCards, type) {
     let cards = [];
     cards = initCards;
 

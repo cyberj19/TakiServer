@@ -42,22 +42,6 @@ exports.APIServer = function(params, taki) {
         response.status(200).send('This is the taki service');
     });
 
-    // app.get('/api/view', function(request, response, next) {
-    //     console.info('GET from VIEW API');
-    //     response.status(200).send(JSON.stringify(taki.getView()));
-    // });
-
-    // app.get('/api/game', function(request, response, next) {
-    //     console.log(request.query);
-    //     let res = taki.getGameView({
-    //         game: request.query.game,
-    //         player: request.query.player
-    //     });
-
-    //     if (res.success) response.status(200).send(res);
-    //     else response.status(400).send(res);
-    // });
-
     app.post('/api/game/move', function(request, response, next) {
         const params = {
             player: request.body.player,
@@ -69,6 +53,7 @@ exports.APIServer = function(params, taki) {
         let res = taki.move(params);
         response.status(200).send(res);
     });
+
     app.post('/api/join', function(request, response, next) {
 
         let res = taki.joinGame({
@@ -87,7 +72,6 @@ exports.APIServer = function(params, taki) {
         }
     });
 
-    
     app.post('/api/leave', function(request, response, next) {
         let res = taki.leaveGame({
             player: request.body.player,
