@@ -177,7 +177,7 @@ class GamePlay extends React.Component {
                         <div
                             className={`card active ${player.turn && (this.playerHasEligibleCard() ? '' : 'required')}`}/>
                     </div>
-                    <Chat messages={messages} playerName={playerName} game={gameName}/>
+                    {isPlayer && <Chat messages={messages} playerName={playerName} game={gameName}/>}
                     <Heap heap={heap}/>
                 </div>);
             }
