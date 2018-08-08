@@ -56,7 +56,7 @@ class GamePlay extends React.Component {
     }
 
     getPlayer() {
-        return this.props.gameObj.players.filter(p => p.name === this.props.playerName)[0];
+        return this.props.gameObj.players.filter(p => p.name === this.props.playerName)[0] || {};
     }
 
     playerHasEligibleCard(considerSuperTaki) {
@@ -73,8 +73,8 @@ class GamePlay extends React.Component {
         apiCall('move', {player: playerName, game: name, move: MOVE_TAKI});
     }
     leaveGame() {
-        const {playerName, gameObj : {name, state}} = this.props;
-        state !== 'Active' && apiCall('leaveGame', {player: playerName, game: name});
+        const {playerName, gameObj : {isPlayer, name, state}} = this.props;
+        (state !== 'Active' || !isPlayer) && apiCall('leaveGame', {player: playerName, game: name});
     }
 
 
@@ -137,8 +137,9 @@ class GamePlay extends React.Component {
     render() {
         const {gameType, gameObj, playerName} = this.props,
             {cantPullModal, startTime} = this.state,
-            {players, heap, winner, winners, tourScores, activeTwo,
+            {players, heap, winner, winners, isPlayer,tourScores, activeTwo,
                 isTaki, state} = gameObj,
+
             _winners = winner || winners || [],
             deckClass = this.getDeckClasses();
 
@@ -152,6 +153,7 @@ class GamePlay extends React.Component {
                         gameType,
                         className: deckClass[i],
                         winner: _winners,
+                        viewMode: !isPlayer,
                         chooseCard: this.chooseCard,
                         isCardEligible: this.isCardEligible,
                         heapCard: topCard,
@@ -160,8 +162,8 @@ class GamePlay extends React.Component {
                     });
 
                 return (<div className="board">
-                    <GameMenu players={players} startTime={startTime} setEndTime={this.setEndTime}
-                              endGameFn={isFinish ? this.leaveGame : null} gameNumber={tourScores ? tourScores.length + 1 : null}/>
+                    <GameMenu players={players} startTime={startTime}
+                              endGameFn={(isFinish || !isPlayer) ? this.leaveGame : null} gameNumber={tourScores ? tourScores.length + 1 : null}/>
                     <Dialog approveFunction={this.closePullCardModal} title={getText('CantPullTitle')}
                             description={getText('CantPullDesc' + (!player.turn ? 'NotPlayer' : (isTaki ? 'Taki' : '')))}
                             isOpen={cantPullModal} noCancel/>
