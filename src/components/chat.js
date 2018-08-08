@@ -43,7 +43,7 @@ class Chat extends Component {
         const {messages} = this.props;
         return (<div className="chat">
             {messages.map(msg => msg)}
-            <input onClick={this.changeMsg} type="text"/><span onClick={this.submitMsg} className="chat__submit">Send</span>
+            <input onChange={this.changeMsg} type="text"/><span onClick={this.submitMsg} className="chat__submit">Send</span>
         </div>)
     }
 }
