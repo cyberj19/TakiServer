@@ -121,7 +121,6 @@ exports.Taki = function () {
             error: errors.GAME_NAME_EXISTS
         };
         const player = players.find(p => p.name === params.player);
-        console.log(player);
         if (!player) return {
             success: false,
             error: errors.PLAYER_UNKNOWN
