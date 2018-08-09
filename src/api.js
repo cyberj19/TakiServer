@@ -7,9 +7,9 @@ const bodyParser = require('body-parser');
 
 exports.APIServer = function(params, taki) {
     let app = express();
-    app.use(bodyParser.json()); // todo: check error handling when not json
+    app.use(bodyParser.json());
     
-    app.set('trust proxy', 1); // trust first proxy: check this
+    app.set('trust proxy', 1); 
     const sessionSettings = {
         secret: 'keyboard cat',
         resave: false,

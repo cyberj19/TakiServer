@@ -34,7 +34,6 @@ exports.cardTypes = {
     Stop: "STOP",
     Taki: "TAKI",
     Color: "COLOR",
-    // SuperTaki: "TAKI",
     ChangeDirection: "CDIR"
 };
 
