@@ -1,5 +1,5 @@
 import React from "react";
-import {getText, getCompName} from "../modules/texts.mjs";
+import {getText} from "../modules/texts.mjs";
 import GamePlay from "./gamePlay";
 import {apiCall} from "../helpers/http";
 import Dialog from "./dialog";
@@ -26,7 +26,6 @@ class GameManager extends React.Component {
             settingsModal: true,
             newGameModal: false,
             pullingInterval: null,
-            computerName: getCompName()
         };
 
         this.setView = this.setView.bind(this);

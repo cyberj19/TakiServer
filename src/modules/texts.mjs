@@ -12,7 +12,7 @@ const texts = {
     tourScoreTotal: 'Total score',
     unknownError: "Unknown error try again later",
     areYouSureDesc: 'After clicking "OK" you will lose the game',
-    settingsModalTitle: 'You can edit your settings:',
+    settingsModalTitle: 'Please pick your name to begin playing',
     newGameModalTitle: 'Create new game',
     regularChooser: 'Regular Game',
     tournamentChooserInfo: 'Play tournament game - you will play 3 games in a row and the winner will be the one with the highest score.',
@@ -40,7 +40,3 @@ export const toTimeString = seconds => {
 
     return getPartTime(timeMins) + ':' + getPartTime(timeSecs);
 };
-
-const computerNames =  ['Danny', 'Jacob', 'Tomer', 'Ofir', 'David', 'Yonni'];
-
-export const getCompName = () => computerNames[Math.floor(Math.random() * computerNames.length)];

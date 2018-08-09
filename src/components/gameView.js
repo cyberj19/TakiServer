@@ -98,5 +98,4 @@ class GameView extends React.Component {
         return <div>Loading...</div>
     }
 }
-
 export default GameView;

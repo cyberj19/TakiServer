@@ -41,11 +41,6 @@ class GamePlay extends React.Component {
         this.playerHasEligibleCard = this.playerHasEligibleCard.bind(this);
     }
 
-
-    componentDidUpdate(preProps) {
-
-    }
-
     pullFromStack() {
         if (!this.playerHasEligibleCard(true)) {
             const {playerName, gameObj : {name}} = this.props;
@@ -78,9 +73,7 @@ class GamePlay extends React.Component {
         (state !== 'Active' || !isPlayer) && apiCall('leaveGame', {player: playerName, game: name});
     }
 
-
     chooseCard(cardIndex, color) {
-
         const {playerName, gameObj : {name}} = this.props,
             player = this.getPlayer(),
             tempCard = {...player.cards[cardIndex]};
@@ -119,7 +112,6 @@ class GamePlay extends React.Component {
 
 
     getDeckClasses() {
-
         const {playerName, gameObj} = this.props,
             {players} = gameObj,
             playersLength = players.length,
@@ -132,7 +124,6 @@ class GamePlay extends React.Component {
         }
 
         return classnames;
-
     }
 
     render() {
