@@ -397,11 +397,13 @@ li.clock::before {
 
 .deck.opp.deck--left > .card:not([data-card-type]):last-of-type::before {
     top: 2px;
-    right: -1px;
+    left: -1px;
+    transform: rotate(-115deg);
 }
 .deck.opp.deck--right > .card:not([data-card-type]):last-of-type::before {
-    bottom: 2px;
+    top: 2px;
     left: -1px;
+    transform: rotate(36deg);
 }
 
 .deck.player {
@@ -453,6 +455,12 @@ li.clock::before {
     -ms-transform: rotate(35deg);
     -o-transform: rotate(35deg);
     transform: rotate(35deg);
+}
+.deck.opp.deck--left .card {
+    transform: rotate(110deg);
+}
+.deck.opp.deck--right .card {
+    transform: rotate(-27deg);
 }
 .stack > .card.active,
 .deck.player > .card.active {
@@ -1056,6 +1064,8 @@ li.clock::before {
     text-align: left;
     overflow-y: auto;
     overflow-x: hidden;
+    margin-bottom: 25px;
+    text-indent: 5px;
 }
 /*****************************/
 /*                           */
