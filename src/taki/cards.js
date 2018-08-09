@@ -4,15 +4,11 @@ const cardColors = consts.cardColors;
 
 exports.isEligible = function(newCard, currentCard, take2mode, isTakeCard=false) {
     if (take2mode) return newCard.type === cardTypes.Take2;
-    
     if (newCard.type === cardTypes.Color) 
         return true;
     if (newCard.wasSuperTaki && !isTakeCard) return true;
-    console.log('Card is of concrete type');
     if (currentCard.color === newCard.color) return true;
-    console.log('Colors dont match');
     if (currentCard.type === newCard.type) return true;
-    console.log('Types dont match');
     return false;
 };
 

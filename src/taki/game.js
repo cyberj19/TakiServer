@@ -27,7 +27,6 @@ exports.Game = function(gameName, creator, requiredPlayers) {
     
     let board = Board.GetTakiBoard(requiredPlayers);
 
-    // const requiredPlayers = requiredPlayers;
     let activePlayers = 0;
 
     me.getOverview = function() {
@@ -157,7 +156,7 @@ exports.Game = function(gameName, creator, requiredPlayers) {
     };
 
     const takeCard = function(player) {
-        if (player.hasEligibleCards(board.getTop(), board.isTake2Mode())) {
+        if (player.hasEligibleCards(board.getTop(), board.isTake2Mode(),true)) {
             return {success: false, error: errors.MOVE_ELLIGIBLE_CARDS};
         }
         player.addCards(board.takeCard());

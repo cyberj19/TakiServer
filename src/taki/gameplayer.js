@@ -31,8 +31,8 @@ exports.GamePlayer = function(name,id,state) {
     me.setWin = function(win) {
         me.win = win;
     }
-    me.hasEligibleCards = function(currentCard, take2mode) {
-        return cards.some(c=>cardsModule.isEligible(c,currentCard,take2mode));
+    me.hasEligibleCards = function(currentCard, take2mode, isTakeCard) {
+        return cards.some(c=>cardsModule.isEligible(c,currentCard,take2mode,isTakeCard));
     };
 
     const getView = function(currentPlayerId) {
