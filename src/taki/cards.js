@@ -2,12 +2,12 @@ const consts = require('./consts.js');
 const cardTypes = consts.cardTypes;
 const cardColors = consts.cardColors;
 
-exports.isEligible = function(newCard, currentCard, take2mode) {
+exports.isEligible = function(newCard, currentCard, take2mode, isTakeCard=false) {
     if (take2mode) return newCard.type === cardTypes.Take2;
     
     if (newCard.type === cardTypes.Color) 
         return true;
-    if (newCard.wasSuperTaki) return true;
+    if (newCard.wasSuperTaki && !isTakeCard) return true;
     console.log('Card is of concrete type');
     if (currentCard.color === newCard.color) return true;
     console.log('Colors dont match');
