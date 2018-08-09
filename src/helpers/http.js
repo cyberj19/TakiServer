@@ -41,20 +41,15 @@ export const apiCall = (type, body, callback, errorFn) => {
                 return errorFn && errorFn(parsedResponse);
             }
         )
-        // response.json().then(json => console.log(json));
-        // if (response.ok) {
-        //     return callback(response);
-        // }
-        // return errorFn && errorFn(response);
     });
 };
 
-function encodeQueryString(params) {
-    const keys = Object.keys(params)
+const encodeQueryString = (params) => {
+    const keys = Object.keys(params);
     return keys.length
         ? "?" + keys
         .map(key => encodeURIComponent(key)
             + "=" + encodeURIComponent(params[key]))
         .join("&")
         : ""
-}
+};
