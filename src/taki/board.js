@@ -3,7 +3,6 @@ const cardTypes = consts.cardTypes;
 const cardColors = consts.cardColors;
 
 const cards = require('./cards.js');
-const random = require('../utils/random.js');
 
 exports.GetTakiBoard = function (nplayers) {
     const DelearModule = require('./dealer.js');

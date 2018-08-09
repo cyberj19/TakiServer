@@ -246,9 +246,10 @@ exports.Game = function(gameName, creator, requiredPlayers) {
         return {success: true};
     };
 
-    const resetGameState = function() {
+    const resetGameStateAndChat = function() {
         if (me.state === gameStates.Finishing && players.length === 0) {
             me.state = gameStates.Pending;
+            messages = [];
         }
 
     }
@@ -256,7 +257,7 @@ exports.Game = function(gameName, creator, requiredPlayers) {
         let player = players[index];
         if (player.state === gamePlayerStates.Finished || me.state === gameStates.Pending) {
             players.splice(index, 1);
-            resetGameState();
+            resetGameStateAndChat();
             return {success: true};
         }
         return {success: false, error: errors.GAME_CANNOT_LEAVE_WHILE_PLAYING};

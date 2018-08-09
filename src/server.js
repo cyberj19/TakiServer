@@ -1,5 +1,5 @@
 const API = require('./api.js').APIServer;
-const Taki = require('../taki/taki.js').Taki;
+const Taki = require('./taki/taki.js').Taki;
 
 
 let taki = new Taki();
